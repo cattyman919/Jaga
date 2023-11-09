@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { VehicleReminderService } from './vehicle-reminder.service';
 import { CreateVehicleReminderDto } from './dto/create-vehicle-reminder.dto';
 import { UpdateVehicleReminderDto } from './dto/update-vehicle-reminder.dto';
 
 @Controller('vehicle-reminder')
 export class VehicleReminderController {
-  constructor(private readonly vehicleReminderService: VehicleReminderService) {}
+  constructor(
+    private readonly vehicleReminderService: VehicleReminderService,
+  ) {}
 
   @Post()
   create(@Body() createVehicleReminderDto: CreateVehicleReminderDto) {
@@ -23,7 +33,10 @@ export class VehicleReminderController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVehicleReminderDto: UpdateVehicleReminderDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateVehicleReminderDto: UpdateVehicleReminderDto,
+  ) {
     return this.vehicleReminderService.update(+id, updateVehicleReminderDto);
   }
 

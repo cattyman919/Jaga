@@ -11,7 +11,9 @@ describe('VehicleReminderController', () => {
       providers: [VehicleReminderService],
     }).compile();
 
-    controller = module.get<VehicleReminderController>(VehicleReminderController);
+    controller = module.get<VehicleReminderController>(
+      VehicleReminderController,
+    );
   });
 
   it('should be defined', () => {

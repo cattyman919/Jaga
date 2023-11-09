@@ -4,10 +4,10 @@ import { AppService } from './app.service';
 import { VehicleReminderModule } from './vehicle-reminder/vehicle-reminder.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { FirebaseModule } from './firebase/firebase.module';
+import { FireBaseModule } from './firebase/firebase.module';
 
 @Module({
-  imports: [VehicleReminderModule, UserModule, AuthModule, FirebaseModule],
+  imports: [VehicleReminderModule, UserModule, AuthModule, FireBaseModule],
   controllers: [AppController],
   providers: [AppService],
 })

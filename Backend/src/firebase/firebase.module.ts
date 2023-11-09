@@ -10,5 +10,6 @@ import { FirebaseModule } from 'nestjs-firebase';
   ],
   controllers: [FirebaseController],
   providers: [FirebaseService],
+  exports:[FirebaseService]
 })
 export class FireBaseModule {}

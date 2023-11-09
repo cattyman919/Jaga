@@ -1,26 +1,23 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Injectable } from '@nestjs/common';
-import { CreateFirebaseDto } from './dto/create-firebase.dto';
-import { UpdateFirebaseDto } from './dto/update-firebase.dto';
+import * as admin from 'firebase-admin';
+import { applicationDefault } from 'firebase-admin/app';
 
 @Injectable()
 export class FirebaseService {
-  create(createFirebaseDto: CreateFirebaseDto) {
-    return 'This action adds a new firebase';
+  private admin;
+
+  constructor() {
+
+    admin.initializeApp({
+      credential: applicationDefault(),
+    });
+
+
+    this.admin = admin;
   }
 
-  findAll() {
-    return `This action returns all firebase`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} firebase`;
-  }
-
-  update(id: number, updateFirebaseDto: UpdateFirebaseDto) {
-    return `This action updates a #${id} firebase`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} firebase`;
+  getAuth() {
+    return this.admin.auth();
   }
 }

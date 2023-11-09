@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { VehicleReminderService } from './vehicle-reminder.service';
 import { CreateVehicleReminderDto } from './dto/create-vehicle-reminder.dto';
@@ -15,7 +16,7 @@ import { UpdateVehicleReminderDto } from './dto/update-vehicle-reminder.dto';
 export class VehicleReminderController {
   constructor(
     private readonly vehicleReminderService: VehicleReminderService,
-  ) {}
+  ) { }
 
   @Post()
   create(@Body() createVehicleReminderDto: CreateVehicleReminderDto) {

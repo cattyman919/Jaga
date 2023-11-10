@@ -21,6 +21,9 @@ export class User {
   @Column({ name: 'lastname' })
   lastName: string;
 
-  @OneToMany(() => Vehicle, (vehicle) => vehicle.userID)
+  @OneToMany(() => Vehicle, (vehicle) => vehicle.user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   vehicles: Vehicle;
 }

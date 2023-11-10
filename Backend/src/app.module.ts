@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { VehicleReminderModule } from './vehicle-reminder/vehicle-reminder.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { DatabaseModule } from './database/database.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
 
 @Module({
   imports: [
@@ -21,10 +21,10 @@ import { DatabaseModule } from './database/database.module';
         RUN_MIGRATIONS: Joi.boolean().default(true),
       }),
     }),
-    VehicleReminderModule,
     UserModule,
     AuthModule,
     DatabaseModule,
+    VehiclesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

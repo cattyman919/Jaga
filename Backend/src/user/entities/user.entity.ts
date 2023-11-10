@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class Users {
+@Entity('users')
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,9 +15,12 @@ export class Users {
   @Column({ nullable: false })
   email: string;
 
-  @Column()
-  firstname: string;
+  @Column({ name: 'firstname' })
+  firstName: string;
 
-  @Column()
-  lastname: string;
+  @Column({ name: 'lastname' })
+  lastName: string;
+
+  @OneToMany(() => Vehicle, (vehicle) => vehicle.userID)
+  vehicles: Vehicle;
 }

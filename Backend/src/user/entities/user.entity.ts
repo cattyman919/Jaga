@@ -12,13 +12,13 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   email: string;
 
-  @Column({ name: 'firstname' })
+  @Column({ name: 'firstname', default: '' })
   firstName: string;
 
-  @Column({ name: 'lastname' })
+  @Column({ name: 'lastname', default: '' })
   lastName: string;
 
   @OneToMany(() => Vehicle, (vehicle) => vehicle.user, {

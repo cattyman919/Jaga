@@ -15,8 +15,10 @@ export class UserService {
   getUserQueryBuilder(): SelectQueryBuilder<User> {
     return this.usersRepository.createQueryBuilder('user');
   }
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(userData: CreateUserDto) {
+    const newUser = await this.usersRepository.create(userData);
+    await this.usersRepository.save(newUser);
+    return newUser;
   }
 
   async findAll(): Promise<User[]> {

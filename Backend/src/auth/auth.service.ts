@@ -9,7 +9,6 @@ import { Response } from 'express'
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import TokenPayload from './interface/payload.interface';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import registerDto from './dto/registerUser.dto';
@@ -54,13 +53,7 @@ export class AuthService {
       const user = await this.userService.findOneByEmail(email);
       if (!user) throw new BadRequestException('User does not exist');
       await this.verifyPassword(plainTextPassword, user.password);
-      // const userToken = await this.userService.getTokenUser(user.email)
-      // if (userToken) {
-      //   await this.jwtService.verifyAsync(userToken, { secret: this.configService.get<string>('JWT_ACCESS_SECRET') })
-      //   return user
-      // }
-      const token = await this.getTokens(user.id.toString(), user.password)
-      await this.userService.addTokenToUser(user.email, token)
+
       return user;
     } catch (error) {
       throw new HttpException(
@@ -85,27 +78,9 @@ export class AuthService {
       );
   }
 
-
-
   hashData(data: string) {
     return bcrypt.hash(data, 10);
   }
 
-  async getTokens(userId: string, username: string): Promise<string> {
-    const payload = {
-      sub: userId,
-      username,
-    }
-    const accessToken = await this.jwtService.signAsync(
-      payload,
-      {
-        secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-        expiresIn: this.configService.get<string>(
-          'JWT_ACCESS_EXPIRATION_TIME',
-        ),
-      },
-    )
 
-    return accessToken;
-  }
 }

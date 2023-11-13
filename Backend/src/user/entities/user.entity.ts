@@ -21,9 +21,6 @@ export class User {
   @Column({ name: 'lastname', default: '' })
   lastName: string;
 
-  @Column()
-  access_token: string
-
   @OneToMany(() => Vehicle, (vehicle) => vehicle.user, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

@@ -21,23 +21,6 @@ export class UserService {
     return newUser;
   }
 
-  async addTokenToUser(email: string, token: string): Promise<User> {
-    try {
-      await this.usersRepository.update({ email }, { access_token: token })
-      return await this.findOneByUsername(email);
-    } catch (error) {
-      throw new HttpException("Something error bro", HttpStatus.BAD_REQUEST)
-    }
-  }
-
-  async verifyTokenUser(email: string): Promise<string> {
-    try {
-      return (await this.findOneByUsername(email)).access_token;
-    } catch (error) {
-      throw new HttpException("Something error bro", HttpStatus.BAD_REQUEST)
-    }
-  }
-
   async findAll(): Promise<User[]> {
     return await this.usersRepository.find();
   }

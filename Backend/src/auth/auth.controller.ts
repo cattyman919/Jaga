@@ -10,17 +10,16 @@ import {
   Req,
   Res,
   UseGuards,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Request } from 'express'
-import { AuthGuard } from '@nestjs/passport';
-import RequestWithUser from './interface/requestWithUser.interface';
-// import { LocalAuthGuard } from './guards/local.guard';
-// import { JwtAuthGuard } from './guards/jwt.guard';
+import { Request, Response } from 'express'
 import registerDto from './dto/registerUser.dto';
 import { AuthenticationGuard } from './guards/authenticated.guard';
 import { LocalAuthGuard } from './guards/local.guard';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
@@ -29,15 +28,10 @@ export class AuthController {
     return await this.authService.register(registrationData);
   }
 
-  //@UseGuards(LocalAuthenticationGuard)
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async logIn(@Req() req: Request) {
     const user = req.user;
-    // const cookie: string = this.authenticationService.getCookieWithJwtToken(
-    //   user.id,
-    // );
-    // request.res.setHeader('Set-Cookie', cookie);
     return user;
   }
 
@@ -45,28 +39,22 @@ export class AuthController {
   @Get('profile')
   async signIn(@Req() req: Request) {
     const user = req.user;
-    // const cookie: string = this.authenticationService.getCookieWithJwtToken(
-    //   user.id,
-    // );
-    // request.res.setHeader('Set-Cookie', cookie);
     return user;
   }
 
-  // @Post('log-out')
-  // @UseGuards(JwtAuthenticationGuard)
-  // async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
-  //   response.setHeader(
-  //     'Set-Cookie',
-  //     this.authenticationService.getCookieForLogOut(),
-  //   );
-  //   return response.sendStatus(200);
-  // }
+  @UseGuards(AuthenticationGuard)
+  @Post('logout')
+  async logOut(@Req() req: Request) {
+    req.session.destroy((err) => {
+      return {
+        message: "Something went wrong",
+        error: err
+      }
+    })
+    return {
+      message: "Successfully Log Out",
+      status: "OK"
+    }
+  }
 
-  // @Get()
-  // @UseGuards(JwtAuthenticationGuard)
-  // authenticate(@Req() request: RequestWithUser) {
-  //   const user = request.user;
-  //   user.password = undefined;
-  //   return user;
-  // }
 }

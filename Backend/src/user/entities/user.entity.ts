@@ -1,5 +1,6 @@
 import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class User {
@@ -10,6 +11,7 @@ export class User {
   username: string;
 
   @Column({ nullable: false })
+  @Exclude()
   password: string;
 
   @Column({ nullable: false, unique: true })

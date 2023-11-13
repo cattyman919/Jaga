@@ -3,7 +3,9 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Res
 } from '@nestjs/common';
+import { Response } from 'express'
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
@@ -17,7 +19,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   public async register(registrationData: registerDto) {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
@@ -44,6 +46,7 @@ export class AuthService {
   }
 
   public async getAuthenticatedUser(
+
     email: string,
     plainTextPassword: string,
   ): Promise<User> {
@@ -51,10 +54,13 @@ export class AuthService {
       const user = await this.userService.findOneByEmail(email);
       if (!user) throw new BadRequestException('User does not exist');
       await this.verifyPassword(plainTextPassword, user.password);
-      //   const tokens = await this.getTokens(user._id, user.username);
-      //   await this.updateRefreshToken(user._id, tokens.refreshToken);
-      //   return tokens;
-      console.log(user);
+      // const userToken = await this.userService.getTokenUser(user.email)
+      // if (userToken) {
+      //   await this.jwtService.verifyAsync(userToken, { secret: this.configService.get<string>('JWT_ACCESS_SECRET') })
+      //   return user
+      // }
+      const token = await this.getTokens(user.id.toString(), user.password)
+      await this.userService.addTokenToUser(user.email, token)
       return user;
     } catch (error) {
       throw new HttpException(
@@ -79,48 +85,27 @@ export class AuthService {
       );
   }
 
-  //   async updateRefreshToken(userId: string, refreshToken: string) {
-  //     const hashedRefreshToken = await this.hashData(refreshToken);
-  //     await this.userService.update(userId, {
-  //       refreshToken: hashedRefreshToken,
-  //     });
-  //   }
 
-  //   hashData(data: string) {
-  //     return bcrypt.hash(data, 10);
-  //   }
 
-  async getTokens(userId: string, username: string) {
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(
-        {
-          sub: userId,
-          username,
-        },
-        {
-          secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-          expiresIn: this.configService.get<string>(
-            'JWT_ACCESS_EXPIRATION_TIME',
-          ),
-        },
-      ),
-      this.jwtService.signAsync(
-        {
-          sub: userId,
-          username,
-        },
-        {
-          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-          expiresIn: this.configService.get<string>(
-            'JWT_REFRESH_EXPIRATION_TIME',
-          ),
-        },
-      ),
-    ]);
+  hashData(data: string) {
+    return bcrypt.hash(data, 10);
+  }
 
-    return {
-      accessToken,
-      refreshToken,
-    };
+  async getTokens(userId: string, username: string): Promise<string> {
+    const payload = {
+      sub: userId,
+      username,
+    }
+    const accessToken = await this.jwtService.signAsync(
+      payload,
+      {
+        secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+        expiresIn: this.configService.get<string>(
+          'JWT_ACCESS_EXPIRATION_TIME',
+        ),
+      },
+    )
+
+    return accessToken;
   }
 }

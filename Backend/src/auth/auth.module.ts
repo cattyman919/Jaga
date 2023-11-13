@@ -6,12 +6,11 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtStrategy } from './strategy/jwt.strategy';
-import { RefreshTokenStrategy } from './strategy/refreshToken.strategy';
+import { SessionSerializer } from './session.serializer';
 
 @Module({
-  imports: [UserModule, PassportModule, ConfigModule, JwtModule.register({})],
+  imports: [UserModule, ConfigModule, JwtModule, PassportModule.register({ session: true })],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshTokenStrategy],
+  providers: [AuthService, LocalStrategy, SessionSerializer],
 })
-export class AuthModule {}
+export class AuthModule { }

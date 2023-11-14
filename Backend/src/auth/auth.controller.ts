@@ -33,6 +33,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async logIn(@Req() req: Request) {
+
     const { user } = req;
     const token = await this.authService.getTokens(user.id.toString(), user.username);
     return token;

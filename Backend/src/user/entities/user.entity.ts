@@ -17,11 +17,8 @@ export class User {
   @Column({ nullable: false, unique: true })
   email: string;
 
-  @Column({ name: 'firstname', default: '' })
-  firstName: string;
-
-  @Column({ name: 'lastname', default: '' })
-  lastName: string;
+  @Column({ name: 'fullname', default: '' })
+  fullName: string;
 
   @OneToMany(() => Vehicle, (vehicle) => vehicle.user, {
     onDelete: 'CASCADE',

@@ -16,8 +16,10 @@ import {
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express'
 import registerDto from './dto/registerUser.dto';
-import { AuthenticationGuard } from './guards/authenticated.guard';
 import { LocalAuthGuard } from './guards/local.guard';
+import { JwtAuthGuard } from './guards/jwt.guard';
+import { User } from 'src/user/entities/user.entity';
+import { RefreshTokenGuard } from './guards/refreshToken.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
@@ -31,30 +33,24 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async logIn(@Req() req: Request) {
-    const user = req.user;
-    return user;
+    const { user } = req;
+    const token = await this.authService.getTokens(user.id.toString(), user.username);
+    return token;
   }
 
-  @UseGuards(AuthenticationGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   async signIn(@Req() req: Request) {
     const user = req.user;
     return user;
   }
 
-  @UseGuards(AuthenticationGuard)
-  @Post('logout')
-  async logOut(@Req() req: Request) {
-    req.session.destroy((err) => {
-      return {
-        message: "Something went wrong",
-        error: err
-      }
-    })
-    return {
-      message: "Successfully Log Out",
-      status: "OK"
-    }
+  @UseGuards(RefreshTokenGuard)
+  @Post('refresh-token')
+  async refreshToken(@Req() req: Request) {
+    const { user } = req;
+    const token = await this.authService.getTokens(user.sub, user.username);
+    return token;
   }
 
 }

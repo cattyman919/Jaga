@@ -53,7 +53,7 @@ export class AuthService {
       const user = await this.userService.findOneByEmail(email);
       if (!user) throw new BadRequestException('User does not exist');
       await this.verifyPassword(plainTextPassword, user.password);
-
+      
       return user;
     } catch (error) {
       throw new HttpException(
@@ -77,6 +77,47 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
   }
+
+  async updateRefreshToken(userId: string, refreshToken: string) {
+    const hashedRefreshToken = await this.hashData(refreshToken);
+    return hashedRefreshToken
+  }
+
+  async verifyToken(token: string){
+
+  }
+
+  async getTokens(userId: string, username: string) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          username,
+        },
+        {
+          secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+          expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION_TIME'),
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          username,
+        },
+        {
+          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+          expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME'),
+        },
+      ),
+    ]);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+
 
   hashData(data: string) {
     return bcrypt.hash(data, 10);

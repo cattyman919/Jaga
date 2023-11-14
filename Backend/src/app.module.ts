@@ -17,6 +17,7 @@ import { VehiclesModule } from './vehicles/vehicles.module';
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
+        COOKIE_SECRET: Joi.string().required(),
         MODE: Joi.string().default('DEV'),
         RUN_MIGRATIONS: Joi.boolean().default(true),
       }),
@@ -29,4 +30,4 @@ import { VehiclesModule } from './vehicles/vehicles.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

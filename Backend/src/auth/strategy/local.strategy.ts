@@ -15,9 +15,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     )
   }
 
-
   async validate(emailLogin: string, passwordLogin: string): Promise<any> {
-    console.log("LOGIN IS REQUESTED");
+    console.log(`LOGIN IS REQUESTED: ${emailLogin} ${passwordLogin}`);
     const user: User = await this.authService.getAuthenticatedUser(emailLogin, passwordLogin);
     const { password, ...restUser } = user
     return restUser;

@@ -6,43 +6,47 @@ import 'package:http/http.dart' as http;
 class AuthenticationService {
   final storage = const FlutterSecureStorage();
 
-  Future<void> login(String username, String password) async {
+  Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.56.101:3000/auth/login'),
         body: {
-          'email': username,
+          'email': email,
           'password': password,
         },
       );
 
       final responseJson = json.decode(response.body);
-
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         await storage.write(
           key: 'access_token',
-          value: responseJson['access_token'],
+          value: responseJson['accessToken'],
         );
         await storage.write(
           key: 'refresh_token',
-          value: responseJson['refresh_token'],
+          value: responseJson['refreshToken'],
         );
+        return true;
       } else {
-        throw Exception('Failed to authenticate');
+        throw Exception('Wrong Credentials');
       }
     } catch (e) {
-      print('Bruh : ${e}');
-      throw Exception('Failed to authenticate');
+      print(e);
+      Exception("Failed to Authenticate");
+      return false;
     }
   }
 
   Future<void> logout() async {
-    await storage.delete(key: 'token');
+    await storage.delete(key: 'access_token');
+    await storage.delete(key: 'refresh_token');
   }
 
   Future<bool> isLoggedIn() async {
-    final token = await storage.read(key: 'token');
-    return token != null;
+    final access_token = await storage.read(key: 'access_token');
+    final refresh_token = await storage.read(key: 'refresh_token');
+
+    return (access_token != null && refresh_token != null);
   }
 
   bool userLoggedIn() {

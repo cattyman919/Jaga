@@ -9,8 +9,8 @@ class LoginViewModel extends FormViewModel {
   void loginUser() async {
     setBusy(true);
     try {
-      _authenticationService.login(emailValue!, passwordValue!);
-      setBusy(false);
+      await _authenticationService.login(emailValue!, passwordValue!);
+      await _authenticationService.isLoggedIn();
     } catch (e) {
       setBusy(false);
       print('Error: $e');

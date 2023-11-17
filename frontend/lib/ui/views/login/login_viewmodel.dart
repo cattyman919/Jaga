@@ -1,20 +1,29 @@
 import 'package:frontend/app/app.locator.dart';
+import 'package:frontend/app/app.router.dart';
 import 'package:frontend/services/authentication_service.dart';
 import 'package:frontend/ui/views/login/login_view.form.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class LoginViewModel extends FormViewModel {
   final _authenticationService = locator<AuthenticationService>();
+  final _navigationService = locator<NavigationService>();
 
   void loginUser() async {
     setBusy(true);
     try {
+      print("Login");
       await _authenticationService.login(emailValue!, passwordValue!);
       await _authenticationService.isLoggedIn();
+      print("Finished Login");
     } catch (e) {
       setBusy(false);
       print('Error: $e');
     }
+  }
+
+  void goToSignUp() async {
+    _navigationService.replaceWithSignupView();
   }
 }
 

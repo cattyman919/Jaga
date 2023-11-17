@@ -22,6 +22,14 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            Text(
+              "Login",
+              textAlign: TextAlign.center,
+              textScaleFactor: 3,
+            ),
+
+            SizedBox(height: 24.0),
+
             // Email TextField
             TextField(
               controller: emailController,
@@ -69,6 +77,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                 ),
               ),
             ),
+
             SizedBox(height: 24.0),
             // Login Button
             ElevatedButton(
@@ -78,6 +87,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                 style: TextStyle(color: Colors.white),
               ),
             ),
+            TextButton(onPressed: viewModel.goToSignUp, child: Text("Sign up"))
           ],
         ),
       ),

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class AuthenticationService {
   final storage = const FlutterSecureStorage();
 
-  Future<bool> login(String email, String password) async {
+  Future<void> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.56.101:3000/auth/login'),
@@ -26,14 +26,37 @@ class AuthenticationService {
           key: 'refresh_token',
           value: responseJson['refreshToken'],
         );
-        return true;
       } else {
         throw Exception('Wrong Credentials');
       }
     } catch (e) {
       print(e);
       Exception("Failed to Authenticate");
-      return false;
+    }
+  }
+
+  Future<void> register(String username, String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.56.101:3000/auth/register'),
+        body: {
+          'username': username,
+          'email': email,
+          'password': password,
+        },
+      );
+
+      final responseJson = json.decode(response.body);
+
+      if (response.statusCode == 201) {
+      } else if (response.statusCode == 400) {
+        throw Exception('User with that username or email already exist');
+      }
+    } catch (e) {
+      if (e != null)
+        print(e);
+      else
+        Exception("Failed to regiser");
     }
   }
 

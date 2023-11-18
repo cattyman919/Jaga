@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/ui/dialogs/info_alert/info_alert_dialog.dart';
+import 'package:frontend/ui/views/signup/signup_view.form.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked/stacked_annotations.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import 'signup_viewmodel.dart';
 
-class SignupView extends StackedView<SignupViewModel> {
+@FormView(fields: [
+  FormTextField(name: "username"),
+  FormTextField(name: "email"),
+  FormTextField(name: "password")
+])
+class SignupView extends StackedView<SignupViewModel> with $SignupView {
   const SignupView({Key? key}) : super(key: key);
 
   @override
@@ -17,16 +26,39 @@ class SignupView extends StackedView<SignupViewModel> {
         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               "Sign Up",
               textAlign: TextAlign.center,
               textScaleFactor: 3,
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
+
+            TextField(
+              controller: usernameController,
+              keyboardType: TextInputType.name,
+              textAlign: TextAlign.center,
+              decoration: const InputDecoration(
+                hintText: 'Username',
+                contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
+                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15.0),
             // Email TextField
             TextField(
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
               textAlign: TextAlign.center,
               decoration: const InputDecoration(
@@ -45,9 +77,10 @@ class SignupView extends StackedView<SignupViewModel> {
                 ),
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 15.0),
             // Password TextField
             TextField(
+              controller: passwordController,
               keyboardType: TextInputType.text,
               textAlign: TextAlign.center,
               obscureText: true,
@@ -70,21 +103,32 @@ class SignupView extends StackedView<SignupViewModel> {
                 ),
               ),
             ),
-
-            SizedBox(height: 24.0),
+            const SizedBox(height: 15.0),
             // Login Button
-            ElevatedButton(
-              onPressed: () => {},
-              child: const Text(
-                'Sign Up',
-                style: TextStyle(color: Colors.white),
+            FractionallySizedBox(
+              widthFactor: 0.7,
+              child: ElevatedButton(
+                onPressed: viewModel.signUpUser,
+                child: const Text(
+                  'Sign Up',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
-            TextButton(onPressed: viewModel.toLoginPage, child: Text("Login"))
+
+            FractionallySizedBox(
+                widthFactor: 0.7,
+                child: TextButton(
+                    onPressed: viewModel.toLoginPage, child: Text("Login")))
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void onViewModelReady(SignupViewModel viewModel) {
+    syncFormWithViewModel(viewModel);
   }
 
   @override

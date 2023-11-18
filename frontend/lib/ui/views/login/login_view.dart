@@ -51,7 +51,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                 ),
               ),
             ),
-            SizedBox(height: 8.0),
+            SizedBox(height: 15.0),
             // Password TextField
             TextField(
               controller: passwordController,
@@ -78,16 +78,23 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
               ),
             ),
 
-            SizedBox(height: 24.0),
+            SizedBox(height: 15.0),
             // Login Button
-            ElevatedButton(
-              onPressed: viewModel.loginUser,
-              child: const Text(
-                'Log In',
-                style: TextStyle(color: Colors.white),
+            FractionallySizedBox(
+              widthFactor: 0.7,
+              child: ElevatedButton(
+                onPressed: viewModel.loginUser,
+                child: const Text(
+                  'Log In',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
-            TextButton(onPressed: viewModel.goToSignUp, child: Text("Sign up"))
+
+            FractionallySizedBox(
+                widthFactor: 0.7,
+                child: TextButton(
+                    onPressed: viewModel.goToSignUp, child: Text("Sign up")))
           ],
         ),
       ),

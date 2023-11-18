@@ -34,7 +34,7 @@ class SignupViewModel extends FormViewModel {
           .whenComplete(() => _navigationService.replaceWithLoginView());
     } catch (e) {
       setBusy(false);
-      print('Error: $e');
+      _dialogService.showDialog(title: e.toString());
     }
   }
 }

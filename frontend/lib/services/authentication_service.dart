@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/app/app.locator.dart';
 import 'package:http/http.dart' as http;
+import 'package:stacked_services/stacked_services.dart';
 
 class AuthenticationService {
   final storage = const FlutterSecureStorage();
+  final _dialogService = locator<DialogService>();
 
   Future<void> login(String email, String password) async {
     try {
@@ -30,8 +33,7 @@ class AuthenticationService {
         throw Exception('Wrong Credentials');
       }
     } catch (e) {
-      print(e);
-      Exception("Failed to Authenticate");
+      rethrow;
     }
   }
 
@@ -46,17 +48,16 @@ class AuthenticationService {
         },
       );
 
+      if (response.statusCode == 201) return;
+
       final responseJson = json.decode(response.body);
 
-      if (response.statusCode == 201) {
-      } else if (response.statusCode == 400) {
-        throw Exception('User with that username or email already exist');
-      }
+      if (response.statusCode == 400) {
+        throw responseJson['message'];
+      } else
+        throw "Failed to create account";
     } catch (e) {
-      if (e != null)
-        print(e);
-      else
-        Exception("Failed to regiser");
+      rethrow;
     }
   }
 

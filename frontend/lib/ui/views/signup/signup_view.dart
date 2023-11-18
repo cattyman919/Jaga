@@ -109,17 +109,26 @@ class SignupView extends StackedView<SignupViewModel> with $SignupView {
               widthFactor: 0.7,
               child: ElevatedButton(
                 onPressed: viewModel.signUpUser,
-                child: const Text(
-                  'Sign Up',
-                  style: TextStyle(color: Colors.white),
-                ),
+                child: !viewModel.isBusy
+                    ? const Text(
+                        'Sign Up',
+                        style: TextStyle(color: Colors.white),
+                      )
+                    : const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 3,
+                        )),
               ),
             ),
-
+            const SizedBox(height: 10.0),
             FractionallySizedBox(
                 widthFactor: 0.7,
                 child: TextButton(
-                    onPressed: viewModel.toLoginPage, child: Text("Login")))
+                    onPressed: viewModel.toLoginPage,
+                    child: Text("Already have an account?")))
           ],
         ),
       ),

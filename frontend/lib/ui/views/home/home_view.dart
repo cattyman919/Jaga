@@ -13,7 +13,6 @@ class HomeView extends StackedView<HomeViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: Colors.purple,
       body: Container(
         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
       ),

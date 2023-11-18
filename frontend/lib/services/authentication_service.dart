@@ -8,11 +8,12 @@ import 'package:stacked_services/stacked_services.dart';
 class AuthenticationService {
   final storage = const FlutterSecureStorage();
   final _dialogService = locator<DialogService>();
+  final localhostIP = "192.168.1.18";
 
   Future<void> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.56.101:3000/auth/login'),
+        Uri.parse('http://${localhostIP}:3000/auth/login'),
         body: {
           'email': email,
           'password': password,
@@ -33,14 +34,14 @@ class AuthenticationService {
         throw Exception('Wrong Credentials');
       }
     } catch (e) {
-      rethrow;
+      throw e;
     }
   }
 
   Future<void> register(String username, String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.56.101:3000/auth/register'),
+        Uri.parse('http://${localhostIP}:3000/auth/register'),
         body: {
           'username': username,
           'email': email,

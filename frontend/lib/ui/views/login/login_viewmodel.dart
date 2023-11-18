@@ -2,6 +2,7 @@ import 'package:flutter/animation.dart';
 import 'package:frontend/app/app.locator.dart';
 import 'package:frontend/app/app.router.dart';
 import 'package:frontend/services/authentication_service.dart';
+import 'package:frontend/ui/views/home/home_view.dart';
 import 'package:frontend/ui/views/login/login_view.form.dart';
 import 'package:frontend/ui/views/signup/signup_view.dart';
 import 'package:stacked/stacked.dart';
@@ -18,23 +19,32 @@ class LoginViewModel extends FormViewModel {
       print("Login");
       await _authenticationService.login(emailValue!, passwordValue!);
       print("Finished Login");
-      clearForm();
+      //clearForm();
       setBusy(false);
       _dialogService
           .showDialog(title: "Login Successful", buttonTitle: "ok")
-          .whenComplete(() => null);
+          .whenComplete(goToHomePage);
     } catch (e) {
       setBusy(false);
       print('Error: $e');
+      _dialogService.showDialog(title: e.toString());
     }
   }
 
   void goToSignUp() async {
-    _navigationService.navigateWithTransition(const SignupView(),
+    await _navigationService.navigateWithTransition(const SignupView(),
         transitionStyle: Transition.downToUp,
         curve: Curves.easeInOut,
         duration: const Duration(milliseconds: 500),
         routeName: Routes.signupView);
+  }
+
+  void goToHomePage() async {
+    await _navigationService.navigateWithTransition(const HomeView(),
+        transitionStyle: Transition.rightToLeft,
+        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 500),
+        routeName: Routes.homeView);
   }
 }
 

@@ -20,7 +20,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
               "Login",
@@ -31,6 +31,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
             SizedBox(height: 24.0),
 
             // Email TextField
+
             TextField(
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
@@ -51,7 +52,8 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                 ),
               ),
             ),
-            SizedBox(height: 15.0),
+
+            SizedBox(height: 8.0),
             // Password TextField
             TextField(
               controller: passwordController,
@@ -78,23 +80,31 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
               ),
             ),
 
-            SizedBox(height: 15.0),
+            SizedBox(height: 24.0),
             // Login Button
             FractionallySizedBox(
               widthFactor: 0.7,
               child: ElevatedButton(
-                onPressed: viewModel.loginUser,
-                child: const Text(
-                  'Log In',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
+                  onPressed: viewModel.loginUser,
+                  child: !viewModel.isBusy
+                      ? const Text(
+                          'Log In',
+                          style: TextStyle(color: Colors.white),
+                        )
+                      : const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ))),
             ),
-
+            SizedBox(height: 10.0),
             FractionallySizedBox(
                 widthFactor: 0.7,
                 child: TextButton(
-                    onPressed: viewModel.goToSignUp, child: Text("Sign up")))
+                    onPressed: viewModel.goToSignUp,
+                    child: Text("Create new account")))
           ],
         ),
       ),

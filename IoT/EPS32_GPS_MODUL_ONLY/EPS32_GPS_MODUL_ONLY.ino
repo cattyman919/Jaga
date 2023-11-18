@@ -6,9 +6,19 @@ double totalDistance = 0;
 double lat1, lon1, lat2, lon2;
 // Threshold untuk perubahan koordinat, diukur dalam meter
 const double coordinateChangeThreshold = 10; // misalnya 10 meter
+// Menambahkan buffer untuk menyimpan pembacaan GPS terakhir
+const int numReadings = 5;
+double latReadings[numReadings];
+double lonReadings[numReadings];
+int readIndex = 0;
 void setup() {
   Serial.begin(115200);
   Serial2.begin(9600);
+   // Inisialisasi buffer pembacaan
+  for (int i = 0; i < numReadings; i++) {
+    latReadings[i] = 0.0;
+    lonReadings[i] = 0.0;
+  }
   Serial.println("nyala");
   delay(3000);
 }
@@ -22,7 +32,13 @@ void updateSerial(){
     Serial.write(Serial2.read());//Forward what Software Serial received to Serial Port
   }
 }
-
+double average(double readings[], int numReadings) {
+    double total = 0;
+    for (int i = 0; i < numReadings; i++) {
+        total += readings[i];
+    }
+    return total / numReadings;
+}
 void displayInfo()
 {
   Serial.print(F("Location: "));
@@ -31,8 +47,15 @@ void displayInfo()
     Serial.print(F(","));
     Serial.print(gps.location.lng(), 6);
 
-    lat2 = gps.location.lat();
-    lon2 = gps.location.lng();
+     // Menyimpan pembacaan GPS terbaru ke dalam buffer
+    latReadings[readIndex] = gps.location.lat();
+    lonReadings[readIndex] = gps.location.lng();
+    readIndex = (readIndex + 1) % numReadings;
+
+    // Menghitung rata-rata dari pembacaan
+    lat2 = average(latReadings, numReadings);
+    lon2 = average(lonReadings, numReadings);
+
 
     if (lat1 != 0 && lon1 != 0) {
             double distanceBetweenPoints = TinyGPSPlus::distanceBetween(lat1, lon1, lat2, lon2);

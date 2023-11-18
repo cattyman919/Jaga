@@ -8,7 +8,6 @@ import 'package:stacked/stacked_annotations.dart';
     fields: [FormTextField(name: "email"), FormTextField(name: "password")])
 class LoginView extends StackedView<LoginViewModel> with $LoginView {
   const LoginView({Key? key}) : super(key: key);
-
   @override
   Widget builder(
     BuildContext context,
@@ -31,7 +30,6 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
             SizedBox(height: 24.0),
 
             // Email TextField
-
             TextField(
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
@@ -114,6 +112,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
   @override
   void onViewModelReady(LoginViewModel viewModel) {
     syncFormWithViewModel(viewModel);
+    viewModel.init();
   }
 
   @override

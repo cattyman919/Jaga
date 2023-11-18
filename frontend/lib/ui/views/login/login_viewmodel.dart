@@ -1,4 +1,5 @@
 import 'package:flutter/animation.dart';
+import 'package:frontend/app/app.dialogs.dart';
 import 'package:frontend/app/app.locator.dart';
 import 'package:frontend/app/app.router.dart';
 import 'package:frontend/services/authentication_service.dart';
@@ -13,6 +14,13 @@ class LoginViewModel extends FormViewModel {
   final _navigationService = locator<NavigationService>();
   final _dialogService = locator<DialogService>();
 
+  init() {
+    print("Init Login");
+    emailValue = "admin@admin.com";
+    passwordValue = "admin123";
+    print(emailValue);
+  }
+
   void loginUser() async {
     setBusy(true);
     try {
@@ -22,12 +30,15 @@ class LoginViewModel extends FormViewModel {
       //clearForm();
       setBusy(false);
       _dialogService
-          .showDialog(title: "Login Successful", buttonTitle: "ok")
+          .showCustomDialog(
+              variant: DialogType.success, description: "Login Successful")
           .whenComplete(goToHomePage);
     } catch (e) {
       setBusy(false);
-      print('Error: $e');
-      _dialogService.showDialog(title: e.toString());
+      _dialogService.showCustomDialog(
+        variant: DialogType.error,
+        description: '$e',
+      );
     }
   }
 

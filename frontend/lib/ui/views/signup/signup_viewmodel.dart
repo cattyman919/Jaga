@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/app.dialogs.dart';
 import 'package:frontend/app/app.locator.dart';
 import 'package:frontend/app/app.router.dart';
 import 'package:frontend/services/authentication_service.dart';
@@ -30,11 +31,16 @@ class SignupViewModel extends FormViewModel {
       clearForm();
       setBusy(false);
       _dialogService
-          .showDialog(title: "Account has successfully been created")
+          .showCustomDialog(
+              variant: DialogType.success,
+              description: "Account has successfully been created")
           .whenComplete(() => _navigationService.replaceWithLoginView());
     } catch (e) {
       setBusy(false);
-      _dialogService.showDialog(title: e.toString());
+      _dialogService.showCustomDialog(
+        variant: DialogType.error,
+        description: '$e',
+      );
     }
   }
 }

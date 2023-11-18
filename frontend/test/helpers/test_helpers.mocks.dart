@@ -684,7 +684,14 @@ class MockAuthenticationService extends _i1.Mock
       ) as _i2.FlutterSecureStorage);
 
   @override
-  _i5.Future<bool> login(
+  String get localhostIP => (super.noSuchMethod(
+        Invocation.getter(#localhostIP),
+        returnValue: '',
+        returnValueForMissingStub: '',
+      ) as String);
+
+  @override
+  _i5.Future<void> login(
     String? email,
     String? password,
   ) =>
@@ -696,9 +703,28 @@ class MockAuthenticationService extends _i1.Mock
             password,
           ],
         ),
-        returnValue: _i5.Future<bool>.value(false),
-        returnValueForMissingStub: _i5.Future<bool>.value(false),
-      ) as _i5.Future<bool>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> register(
+    String? username,
+    String? email,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #register,
+          [
+            username,
+            email,
+            password,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
   _i5.Future<void> logout() => (super.noSuchMethod(

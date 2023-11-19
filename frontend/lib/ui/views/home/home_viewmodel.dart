@@ -1,10 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:frontend/app/app.bottomsheets.dart';
 import 'package:frontend/app/app.dialogs.dart';
 import 'package:frontend/app/app.locator.dart';
+import 'package:frontend/app/app.router.dart';
+import 'package:frontend/services/authentication_service.dart';
 import 'package:frontend/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -21,6 +21,11 @@ class CarModelService extends ChangeNotifier {
 }
 
 class HomeViewModel extends IndexTrackingViewModel {
+  final _authenticationService = locator<AuthenticationService>();
+  final _dialogService = locator<DialogService>();
+  final _bottomSheetService = locator<BottomSheetService>();
+  final _navigationService = locator<NavigationService>();
+
   final List<CarModelService> _carModelServices = [
     CarModelService(carName: 'Avanza', kmDistance: 300, timeDuration: 2),
     CarModelService(carName: 'BMW M3', kmDistance: 1512, timeDuration: 5),
@@ -28,19 +33,44 @@ class HomeViewModel extends IndexTrackingViewModel {
 
   List<CarModelService> get carModelServices => _carModelServices;
 
-  final _dialogService = locator<DialogService>();
-  final _bottomSheetService = locator<BottomSheetService>();
-
   String get counterLabel => 'Counter is: $_counter';
 
   int _counter = 0;
 
   void bluetoothInit() async {
     FlutterBlue flutterBlue = FlutterBlue.instance;
-    var lol = await NetworkInterface.list();
-    print(lol);
     var oof = await flutterBlue.isAvailable;
-    print(oof);
+    if (oof) {
+      _dialogService.showCustomDialog(
+          variant: DialogType.success,
+          title: "Hooray you have a Bluetooth",
+          description: "You can use this to connect and claim your ESP32");
+    } else {
+      _dialogService.showCustomDialog(
+          variant: DialogType.error,
+          title: "damn you don't have a Bluetooth very sad",
+          description: "You cannot connect and claim your ESP32");
+    }
+  }
+
+  void logOutUser() async {
+    setBusy(true);
+    try {
+      print("Logout");
+      await _authenticationService.logout();
+      print("Finished Logout");
+      setBusy(false);
+      _dialogService
+          .showCustomDialog(
+              variant: DialogType.success, description: "Logout Successful")
+          .whenComplete(_navigationService.replaceWithLoginView);
+    } catch (e) {
+      setBusy(false);
+      _dialogService.showCustomDialog(
+        variant: DialogType.error,
+        description: '$e',
+      );
+    }
   }
 
   void incrementCounter() {

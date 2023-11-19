@@ -84,7 +84,7 @@ class ErrorDialog extends StackedView<ErrorDialogModel> {
             GestureDetector(
               onTap: () => completer(DialogResponse(confirmed: true)),
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 width: double.infinity,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(

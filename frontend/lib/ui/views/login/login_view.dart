@@ -16,18 +16,18 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
   ) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               "Login",
               textAlign: TextAlign.center,
               textScaleFactor: 3,
             ),
 
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
 
             // Email TextField
             TextField(
@@ -51,7 +51,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
               ),
             ),
 
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             // Password TextField
             TextField(
               controller: passwordController,
@@ -78,7 +78,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
               ),
             ),
 
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             // Login Button
             FractionallySizedBox(
               widthFactor: 0.7,
@@ -97,12 +97,12 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                             strokeWidth: 3,
                           ))),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             FractionallySizedBox(
                 widthFactor: 0.7,
                 child: TextButton(
                     onPressed: viewModel.goToSignUp,
-                    child: Text("Create new account")))
+                    child: const Text("Create new account")))
           ],
         ),
       ),

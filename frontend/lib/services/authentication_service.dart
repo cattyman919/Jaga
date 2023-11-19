@@ -12,17 +12,19 @@ class AuthenticationService {
   final localhostIPAndroid = 'http://10.0.2.2:3000';
   final deployURL = "https://jaga-backend.vercel.app";
 
+  final Duration timeoutDuration = const Duration(seconds: 15);
+
   String get currentIP => localhostIPAndroid;
 
   Future<void> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('${deployURL}/auth/login'),
+        Uri.parse('$deployURL/auth/login'),
         body: {
           'email': email,
           'password': password,
         },
-      ).timeout(const Duration(seconds: 8));
+      ).timeout(timeoutDuration);
 
       final responseJson = json.decode(response.body);
       if (response.statusCode == 201) {
@@ -45,13 +47,13 @@ class AuthenticationService {
   Future<void> register(String username, String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('${deployURL}/auth/register'),
+        Uri.parse('$deployURL/auth/register'),
         body: {
           'username': username,
           'email': email,
           'password': password,
         },
-      ).timeout(const Duration(seconds: 8));
+      ).timeout(timeoutDuration);
 
       if (response.statusCode == 201) return;
 
@@ -59,8 +61,9 @@ class AuthenticationService {
 
       if (response.statusCode == 400) {
         throw responseJson['message'];
-      } else
+      } else {
         throw "Failed to create account";
+      }
     } catch (e) {
       rethrow;
     }
@@ -72,13 +75,9 @@ class AuthenticationService {
   }
 
   Future<bool> isLoggedIn() async {
-    final access_token = await storage.read(key: 'access_token');
-    final refresh_token = await storage.read(key: 'refresh_token');
+    final accessToken = await storage.read(key: 'access_token');
+    final refreshToken = await storage.read(key: 'refresh_token');
 
-    return (access_token != null && refresh_token != null);
-  }
-
-  bool userLoggedIn() {
-    return false;
+    return (accessToken != null && refreshToken != null);
   }
 }

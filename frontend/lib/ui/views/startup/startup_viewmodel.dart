@@ -11,7 +11,7 @@ class StartupViewModel extends BaseViewModel {
 
   Future runStartupLogic() async {
     // 2. Check if the user is logged in
-    if (_authenticationService.userLoggedIn()) {
+    if (await _authenticationService.isLoggedIn()) {
       // 3. Navigate to Sign up View
       _navigationService.replaceWith(Routes.homeView);
     } else {

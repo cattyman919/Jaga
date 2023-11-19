@@ -4,7 +4,6 @@ import 'home_viewmodel.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
-
   @override
   Widget build(
     BuildContext context,
@@ -17,7 +16,6 @@ class HomeView extends StatelessWidget {
                   indicatorColor: Colors.amber,
                   onDestinationSelected: viewModel.setIndex,
                   selectedIndex: viewModel.currentIndex,
-                  backgroundColor: Colors.grey[800],
                   destinations: const [
                     NavigationDestination(
                       label: "Home",
@@ -46,8 +44,10 @@ class HomeView extends StatelessWidget {
         return homeDestination(viewModel);
       case 1:
         return bluetoothDestination(viewModel);
+      case 2:
+        return profileDestination(viewModel);
       default:
-        return Text("Nothing");
+        return const Text("Nothing");
     }
   }
 
@@ -66,6 +66,49 @@ class HomeView extends StatelessWidget {
 
   Widget bluetoothDestination(HomeViewModel viewModel) {
     viewModel.bluetoothInit();
-    return Text("Bluetooth");
+    return const Text("Bluetooth");
+  }
+
+  Widget profileDestination(HomeViewModel viewModel) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              "username",
+              textAlign: TextAlign.center,
+            ),
+            const Text(
+              "Full Name",
+              textAlign: TextAlign.center,
+            ),
+            const Text(
+              "email",
+              textAlign: TextAlign.center,
+            ),
+            FractionallySizedBox(
+              widthFactor: 0.4,
+              child: ElevatedButton(
+                  onPressed: viewModel.logOutUser,
+                  style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                          Color.fromARGB(255, 212, 50, 39))),
+                  child: !viewModel.isBusy
+                      ? const Text(
+                          'Log out',
+                          style: TextStyle(color: Colors.white),
+                        )
+                      : const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ))),
+            ),
+          ]),
+    );
   }
 }

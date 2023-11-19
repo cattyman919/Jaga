@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/ui/dialogs/info_alert/info_alert_dialog.dart';
 import 'package:frontend/ui/views/signup/signup_view.form.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
-import 'package:stacked_services/stacked_services.dart';
 
 import 'signup_viewmodel.dart';
 
@@ -128,7 +126,7 @@ class SignupView extends StackedView<SignupViewModel> with $SignupView {
                 widthFactor: 0.7,
                 child: TextButton(
                     onPressed: viewModel.toLoginPage,
-                    child: Text("Already have an account?")))
+                    child: const Text("Already have an account?")))
           ],
         ),
       ),

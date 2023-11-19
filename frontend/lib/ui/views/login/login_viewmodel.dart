@@ -51,11 +51,27 @@ class LoginViewModel extends FormViewModel {
   }
 
   void goToHomePage() async {
-    await _navigationService.replaceWithTransition(const HomeView(),
+    await _navigationService.navigateWithTransition(const HomeView(),
         transitionStyle: Transition.rightToLeft,
         curve: Curves.easeInOut,
         duration: const Duration(milliseconds: 500),
         routeName: Routes.homeView);
+  }
+
+  Future<bool> onBackPressed() async {
+    bool? canPop = StackedService.navigatorKey?.currentState?.canPop();
+
+    // Check if we can't pop back stack. If we can't it means we will pop out from app
+    if (!canPop!) {
+      Set<bool> popFromApp = await _dialogService
+          .showConfirmationDialog(
+              title: "Are you sure you want to exit the app")
+          .then((value) => {if (value!.confirmed) true else false});
+
+      return popFromApp.first;
+    } else {
+      return false;
+    }
   }
 }
 

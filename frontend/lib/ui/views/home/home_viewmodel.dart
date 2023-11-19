@@ -93,11 +93,18 @@ class HomeViewModel extends IndexTrackingViewModel {
     if (!canPop!) {
       Set<bool> popFromApp = await _dialogService
           .showConfirmationDialog(
-              title: "Are you sure you want to exit the app")
+              title: "Are you sure you want to exit the app?")
           .then((value) => {if (value!.confirmed) true else false});
 
       return popFromApp.first;
     } else {
+      Set<bool> logout = await _dialogService
+          .showConfirmationDialog(title: "Are you sure you want to logout?")
+          .then((value) => {if (value!.confirmed) true else false});
+      if (logout.first) {
+        await _authenticationService.logout();
+        return true;
+      }
       return false;
     }
   }

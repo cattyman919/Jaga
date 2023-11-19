@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:frontend/app/app.bottomsheets.dart';
 import 'package:frontend/app/app.dialogs.dart';
 import 'package:frontend/app/app.locator.dart';
@@ -31,6 +34,14 @@ class HomeViewModel extends IndexTrackingViewModel {
   String get counterLabel => 'Counter is: $_counter';
 
   int _counter = 0;
+
+  void bluetoothInit() async {
+    FlutterBlue flutterBlue = FlutterBlue.instance;
+    var lol = await NetworkInterface.list();
+    print(lol);
+    var oof = await flutterBlue.isAvailable;
+    print(oof);
+  }
 
   void incrementCounter() {
     _counter++;

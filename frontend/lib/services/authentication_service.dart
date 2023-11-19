@@ -8,17 +8,21 @@ import 'package:stacked_services/stacked_services.dart';
 class AuthenticationService {
   final storage = const FlutterSecureStorage();
   final _dialogService = locator<DialogService>();
-  final localhostIP = "192.168.1.18";
+  final localhostIP = "http://192.168.1.18:3000";
+  final localhostIPAndroid = 'http://10.0.2.2:3000';
+  final deployURL = "https://jaga-backend.vercel.app";
+
+  String get currentIP => localhostIPAndroid;
 
   Future<void> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://${localhostIP}:3000/auth/login'),
+        Uri.parse('${deployURL}/auth/login'),
         body: {
           'email': email,
           'password': password,
         },
-      );
+      ).timeout(const Duration(seconds: 8));
 
       final responseJson = json.decode(response.body);
       if (response.statusCode == 201) {
@@ -34,20 +38,20 @@ class AuthenticationService {
         throw Exception('Wrong Credentials');
       }
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
   Future<void> register(String username, String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://${localhostIP}:3000/auth/register'),
+        Uri.parse('${deployURL}/auth/register'),
         body: {
           'username': username,
           'email': email,
           'password': password,
         },
-      );
+      ).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 201) return;
 

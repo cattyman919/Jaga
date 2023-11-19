@@ -25,6 +25,10 @@ class HomeView extends StatelessWidget {
                       icon: Icon(Icons.home_outlined),
                     ),
                     NavigationDestination(
+                      label: "ESP32",
+                      icon: Icon(Icons.bluetooth),
+                    ),
+                    NavigationDestination(
                       label: "Profile",
                       icon: Icon(Icons.account_circle),
                     ),
@@ -39,15 +43,15 @@ class HomeView extends StatelessWidget {
   Widget getViewForIndex(int index, HomeViewModel viewModel) {
     switch (index) {
       case 0:
-        return HomeDestination(viewModel);
+        return homeDestination(viewModel);
       case 1:
-        return Text("Profile");
+        return bluetoothDestination(viewModel);
       default:
         return Text("Nothing");
     }
   }
 
-  Widget HomeDestination(HomeViewModel viewModel) {
+  Widget homeDestination(HomeViewModel viewModel) {
     return ListView.builder(
         itemCount: viewModel.carModelServices.length,
         itemBuilder: (context, index) {
@@ -58,5 +62,10 @@ class HomeView extends StatelessWidget {
                 'Next Services in next ${carModel.kmDistance} Km or ${carModel.timeDuration} months'),
           );
         });
+  }
+
+  Widget bluetoothDestination(HomeViewModel viewModel) {
+    viewModel.bluetoothInit();
+    return Text("Bluetooth");
   }
 }

@@ -10,31 +10,34 @@ class HomeView extends StatelessWidget {
   ) {
     return ViewModelBuilder.reactive(
         viewModelBuilder: () => HomeViewModel(),
-        builder: (context, viewModel, child) => Scaffold(
-              body: getViewForIndex(viewModel.currentIndex, viewModel),
-              bottomNavigationBar: NavigationBar(
-                  indicatorColor: Colors.amber,
-                  onDestinationSelected: viewModel.setIndex,
-                  selectedIndex: viewModel.currentIndex,
-                  destinations: const [
-                    NavigationDestination(
-                      label: "Home",
-                      selectedIcon: Icon(Icons.home),
-                      icon: Icon(Icons.home_outlined),
-                    ),
-                    NavigationDestination(
-                      label: "ESP32",
-                      icon: Icon(Icons.bluetooth),
-                    ),
-                    NavigationDestination(
-                      label: "Profile",
-                      icon: Icon(Icons.account_circle),
-                    ),
-                    NavigationDestination(
-                      label: "Notification",
-                      icon: Badge(child: Icon(Icons.notifications_sharp)),
-                    ),
-                  ]),
+        builder: (context, viewModel, child) => WillPopScope(
+              onWillPop: viewModel.onBackPressed,
+              child: Scaffold(
+                body: getViewForIndex(viewModel.currentIndex, viewModel),
+                bottomNavigationBar: NavigationBar(
+                    indicatorColor: Colors.amber,
+                    onDestinationSelected: viewModel.setIndex,
+                    selectedIndex: viewModel.currentIndex,
+                    destinations: const [
+                      NavigationDestination(
+                        label: "Home",
+                        selectedIcon: Icon(Icons.home),
+                        icon: Icon(Icons.home_outlined),
+                      ),
+                      NavigationDestination(
+                        label: "ESP32",
+                        icon: Icon(Icons.bluetooth),
+                      ),
+                      NavigationDestination(
+                        label: "Profile",
+                        icon: Icon(Icons.account_circle),
+                      ),
+                      NavigationDestination(
+                        label: "Notification",
+                        icon: Badge(child: Icon(Icons.notifications_sharp)),
+                      ),
+                    ]),
+              ),
             ));
   }
 

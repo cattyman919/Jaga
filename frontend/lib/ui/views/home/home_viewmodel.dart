@@ -78,19 +78,27 @@ class HomeViewModel extends IndexTrackingViewModel {
     rebuildUi();
   }
 
-  void showDialog() {
-    _dialogService.showCustomDialog(
-      variant: DialogType.infoAlert,
-      title: 'Stacked Rocks!',
-      description: 'Give stacked $_counter stars on Github',
-    );
-  }
-
   void showBottomSheet() {
     _bottomSheetService.showCustomSheet(
       variant: BottomSheetType.notice,
       title: ksHomeBottomSheetTitle,
       description: ksHomeBottomSheetDescription,
     );
+  }
+
+  Future<bool> onBackPressed() async {
+    bool? canPop = StackedService.navigatorKey?.currentState?.canPop();
+
+    // Check if we can't pop back stack. If we can't it means we will pop out from app
+    if (!canPop!) {
+      Set<bool> popFromApp = await _dialogService
+          .showConfirmationDialog(
+              title: "Are you sure you want to exit the app")
+          .then((value) => {if (value!.confirmed) true else false});
+
+      return popFromApp.first;
+    } else {
+      return false;
+    }
   }
 }

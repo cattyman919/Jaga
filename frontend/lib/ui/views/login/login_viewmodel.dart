@@ -51,7 +51,7 @@ class LoginViewModel extends FormViewModel {
   }
 
   void goToHomePage() async {
-    await _navigationService.navigateWithTransition(const HomeView(),
+    await _navigationService.replaceWithTransition(const HomeView(),
         transitionStyle: Transition.rightToLeft,
         curve: Curves.easeInOut,
         duration: const Duration(milliseconds: 500),

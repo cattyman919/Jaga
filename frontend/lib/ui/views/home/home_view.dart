@@ -10,10 +10,20 @@ class HomeView extends StatelessWidget {
   ) {
     return ViewModelBuilder.reactive(
         viewModelBuilder: () => HomeViewModel(),
+        onViewModelReady: (viewModel) => viewModel.bluetoothInit(),
         builder: (context, viewModel, child) => WillPopScope(
               onWillPop: viewModel.onBackPressed,
               child: Scaffold(
-                body: getViewForIndex(viewModel.currentIndex, viewModel),
+                body: PageView(
+                  controller: viewModel.pageViewController,
+                  children: [
+                    homeDestination(viewModel),
+                    bluetoothDestination(viewModel),
+                    profileDestination(viewModel),
+                    Text("Nothing")
+                  ],
+                  onPageChanged: (value) => viewModel.setIndex(value),
+                ),
                 bottomNavigationBar: NavigationBar(
                     indicatorColor: Colors.amber,
                     onDestinationSelected: viewModel.setIndex,
@@ -68,7 +78,6 @@ class HomeView extends StatelessWidget {
   }
 
   Widget bluetoothDestination(HomeViewModel viewModel) {
-    viewModel.bluetoothInit();
     return const Text("Bluetooth");
   }
 

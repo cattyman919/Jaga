@@ -35,6 +35,10 @@ class HomeViewModel extends IndexTrackingViewModel {
 
   String get counterLabel => 'Counter is: $_counter';
 
+  final pageViewController = PageController();
+
+  int activePage = 0;
+
   int _counter = 0;
 
   void bluetoothInit() async {

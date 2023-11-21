@@ -22,11 +22,16 @@ class HomeView extends StatelessWidget {
                     profileDestination(viewModel),
                     Text("Nothing")
                   ],
-                  onPageChanged: (value) => viewModel.setIndex(value),
+                  onPageChanged: viewModel.setIndex,
                 ),
                 bottomNavigationBar: NavigationBar(
                     indicatorColor: Colors.amber,
-                    onDestinationSelected: viewModel.setIndex,
+                    onDestinationSelected: (value) {
+                      viewModel.setIndex(value);
+                      viewModel.pageViewController.animateToPage(value,
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.easeInOut);
+                    },
                     selectedIndex: viewModel.currentIndex,
                     destinations: const [
                       NavigationDestination(

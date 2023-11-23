@@ -1,25 +1,21 @@
+import { OmitType } from '@nestjs/mapped-types';
 import { IsString, IsNotEmpty, IsOptional, IsDateString, IsEnum, IsNumberString } from 'class-validator';
 import { vehicle_type } from 'src/enums/vehicleType_enum';
+import { CreateVehicleDto } from './create-vehicle.dto';
 
-export class UpdateVehicleDto {
-    @IsString()
+export class UpdateVehicleDto extends OmitType(CreateVehicleDto, ['userID'] as const) {
     @IsOptional()
-    name: string | null
+    name: string;
 
-    @IsEnum({
-        car: 'car',
-        motorcycle: 'motorcycle'
-    })
     @IsOptional()
-    type: vehicle_type | null
+    kilometres: number;
 
-    @IsDateString()
     @IsOptional()
-    years: Date | null
+    type: vehicle_type;
 
-    @IsNumberString()
     @IsOptional()
-    kilometres: number | null;
+    years: Date;
+
 }
 
 

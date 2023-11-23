@@ -22,9 +22,6 @@ export default class registerDto {
 
   @IsString()
   @IsOptional()
-  firstName: string;
+  fullName: string;
 
-  @IsString()
-  @IsOptional()
-  lastName: string;
 }

@@ -4,6 +4,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { isEmpty } from 'class-validator';
 
 @Injectable()
 export class UserService {
@@ -34,16 +36,36 @@ export class UserService {
   }
 
   async findOneById(id: number) {
-    const user = await this.usersRepository.findOneBy({ id });
-    if (user) return user;
-    throw new HttpException(
-      'User with this id does not exist',
-      HttpStatus.NOT_FOUND,
-    );
+    try {
+      const user = await this.usersRepository.findOneBy({ id });
+      if (user) return user;
+      throw new HttpException(
+        'User with this id does not exist',
+        HttpStatus.NOT_FOUND,
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const { fullName, password, username } = updateUserDto;
+
+    if (fullName == null && password == null && username == null) {
+      throw new HttpException("Body is empty!", HttpStatus.BAD_REQUEST);
+    }
+
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+
+    await this.findOneById(id);
+    try {
+      await this.usersRepository.update({ id }, updateUserDto);
+    } catch (error) {
+      throw error;
+    }
+    return await this.findOneById(id);
   }
 
   async remove(id: number) {

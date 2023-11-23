@@ -46,16 +46,31 @@ export class VehiclesService {
   }
 
   async update(id: number, updateVehicleDto: UpdateVehicleDto) {
+    const { kilometres, name, type, years } = updateVehicleDto;
+
+    if (kilometres == null && name == null && type == null && years == null) {
+      throw new HttpException("Body is empty!", HttpStatus.BAD_REQUEST);
+    }
+
     await this.findOneByID(id);
-    await this.vehiclesRepository.update({ id }, updateVehicleDto);
+    try {
+      await this.vehiclesRepository.update({ id }, updateVehicleDto);
+    } catch (error) {
+      throw error;
+    }
+
     return await this.findOneByID(id);
   }
 
   async remove(id: number) {
     await this.findOneByID(id);
-    await this.vehiclesRepository.delete({ id });
+    try {
+      await this.vehiclesRepository.delete({ id });
+    } catch (error) {
+      throw error;
+    }
     return {
-      "message":`Vehicle with id ${id} has been deleted`,
+      "message": `Vehicle with id ${id} has been deleted`,
       "status": "SUCCESS"
     };
   }

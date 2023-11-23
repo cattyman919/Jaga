@@ -17,16 +17,13 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   public async register(registrationData: registerDto) {
-    const hashedPassword = await bcrypt.hash(registrationData.password, 10);
+    registrationData.password = await bcrypt.hash(registrationData.password, 10);
 
     try {
-      const createdUser = await this.userService.create({
-        ...registrationData,
-        password: hashedPassword,
-      });
+      const createdUser = await this.userService.create(registrationData);
 
       return createdUser;
     } catch (error) {

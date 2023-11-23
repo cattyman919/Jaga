@@ -21,9 +21,6 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  firstName: string;
+  fullName: string;
 
-  @IsString()
-  @IsOptional()
-  lastName: string;
 }

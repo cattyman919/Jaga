@@ -1,3 +1,4 @@
+import { vehicle_type } from 'src/enums/vehicleType_enum';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -35,7 +36,3 @@ export class Vehicle {
   user: User;
 }
 
-enum vehicle_type {
-  car = 'car',
-  motorcycle = 'motorcycle',
-}

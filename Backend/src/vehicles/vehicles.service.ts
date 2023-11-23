@@ -1,35 +1,62 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { ObjectId, Repository, SelectQueryBuilder } from 'typeorm';
 import { Vehicle } from './entities/vehicle.entity';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class VehiclesService {
   constructor(
     @InjectRepository(Vehicle)
     private vehiclesRepository: Repository<Vehicle>,
-  ) {}
+    private readonly userService: UserService,
+  ) { }
 
-  create(createVehicleDto: CreateVehicleDto) {
-    return 'This action adds a new vehicle';
+  async create(createVehicleDto: CreateVehicleDto) {
+    // Find if user Id is valid
+    await this.userService.findOneById(createVehicleDto.userID); // It will throw error if user not found
+
+    const newVehicle = await this.vehiclesRepository.create(createVehicleDto);
+    await this.vehiclesRepository.save(newVehicle);
+    return newVehicle;
   }
 
   async findAll() {
     return await this.vehiclesRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} vehicle`;
+  async findOneByName(name: string): Promise<Vehicle> {
+    return await this.vehiclesRepository.findOneBy({ name });
   }
 
-  update(id: number, updateVehicleDto: UpdateVehicleDto) {
-    return `This action updates a #${id} vehicle`;
+  async findOneVehicleByUserID(userID: number): Promise<Vehicle> {
+    return await this.vehiclesRepository.findOneBy({ userID });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} vehicle`;
+  async findOneByID(id: number) {
+    const vehicle = await this.vehiclesRepository.findOneBy({ id });
+    if (vehicle) return vehicle
+    throw new HttpException(
+      'Vehicle with this id does not exist',
+      HttpStatus.NOT_FOUND,
+    );
+  }
+
+  async update(id: number, updateVehicleDto: UpdateVehicleDto) {
+    await this.findOneByID(id);
+    await this.vehiclesRepository.update({ id }, updateVehicleDto);
+    return await this.findOneByID(id);
+  }
+
+  async remove(id: number) {
+    await this.findOneByID(id);
+    await this.vehiclesRepository.delete({ id });
+    return {
+      "message":`Vehicle with id ${id} has been deleted`,
+      "status": "SUCCESS"
+    };
   }
 }

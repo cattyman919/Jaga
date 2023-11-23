@@ -22,12 +22,16 @@ class HomeView extends StatelessWidget {
                     profileDestination(viewModel),
                     Text("Nothing")
                   ],
-                  onPageChanged: viewModel.setIndex,
+                  onPageChanged: (value) {
+                    viewModel.setIndex(value);
+                    viewModel.onPageChanged(value);
+                  },
                 ),
                 bottomNavigationBar: NavigationBar(
                     indicatorColor: Colors.amber,
                     onDestinationSelected: (value) {
                       viewModel.setIndex(value);
+                      viewModel.onPageChanged(value);
                       viewModel.pageViewController.animateToPage(value,
                           duration: Duration(milliseconds: 200),
                           curve: Curves.easeInOut);
@@ -54,19 +58,6 @@ class HomeView extends StatelessWidget {
                     ]),
               ),
             ));
-  }
-
-  Widget getViewForIndex(int index, HomeViewModel viewModel) {
-    switch (index) {
-      case 0:
-        return homeDestination(viewModel);
-      case 1:
-        return bluetoothDestination(viewModel);
-      case 2:
-        return profileDestination(viewModel);
-      default:
-        return const Text("Nothing");
-    }
   }
 
   Widget homeDestination(HomeViewModel viewModel) {

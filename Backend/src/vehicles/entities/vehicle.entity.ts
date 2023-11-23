@@ -24,7 +24,7 @@ export class Vehicle {
   @Column({ type: 'timestamptz' })
   years: Date;
 
-  @Column()
+  @Column({ default: 0 })
   kilometres: number;
 
   @ManyToOne(() => User, (user) => user.vehicles, {

@@ -41,20 +41,47 @@ class HomeViewModel extends IndexTrackingViewModel {
 
   int _counter = 0;
 
+  late final bluetoothIsAvailable;
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+
   void bluetoothInit() async {
-    FlutterBlue flutterBlue = FlutterBlue.instance;
-    var oof = await flutterBlue.isAvailable;
-    if (oof) {
-      _dialogService.showCustomDialog(
+    if (await flutterBlue.isAvailable) {
+      bluetoothIsAvailable = true;
+      await _dialogService.showCustomDialog(
           variant: DialogType.success,
           title: "Hooray you have a Bluetooth",
           description: "You can use this to connect and claim your ESP32");
     } else {
-      _dialogService.showCustomDialog(
+      bluetoothIsAvailable = false;
+      await _dialogService.showCustomDialog(
           variant: DialogType.error,
           title: "damn you don't have a Bluetooth very sad",
           description: "You cannot connect and claim your ESP32");
+      return;
     }
+  }
+
+  void bluetoothScan() async {
+    if (bluetoothIsAvailable) {
+      // Start scanning
+      flutterBlue.startScan(timeout: Duration(seconds: 4));
+
+      // Listen to scan results
+      var subscription = flutterBlue.scanResults.listen((results) {
+        // do something with scan results
+        for (ScanResult r in results) {
+          print('${r.device.name} found! rssi: ${r.rssi}');
+        }
+      });
+
+      // Stop scanning
+      flutterBlue.stopScan();
+    }
+  }
+
+  void onPageChanged(int indexPage) {
+    print(indexPage);
+    print("Current index" + currentIndex.toString());
   }
 
   void logOutUser() async {

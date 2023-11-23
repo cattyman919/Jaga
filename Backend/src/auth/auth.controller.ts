@@ -50,7 +50,7 @@ export class AuthController {
   @Get('profile')
   async signIn(@Req() req: Request) {
     const user = req.user;
-    return user;
+    return await this.authService.getProfile(+user.sub);
   }
 
   @UseGuards(RefreshTokenGuard)

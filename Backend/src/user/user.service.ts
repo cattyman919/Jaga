@@ -28,11 +28,21 @@ export class UserService {
   }
 
   async findOneByUsername(username: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ username });
+    try {
+      return await this.usersRepository.findOneBy({ username });
+    } catch (error) {
+      throw error;
+    }
+
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ email });
+    try {
+      return await this.usersRepository.findOneBy({ email });
+    } catch (error) {
+      throw error;
+    }
+
   }
 
   async findOneById(id: number) {

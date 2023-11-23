@@ -75,6 +75,9 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
   }
+  public async getProfile(id: number) {
+    return this.userService.findOneById(id);
+  }
 
   //   async updateRefreshToken(userId: string, refreshToken: string) {
   //     const hashedRefreshToken = await this.hashData(refreshToken);

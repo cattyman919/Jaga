@@ -10,52 +10,76 @@ class HomeView extends StatelessWidget {
   ) {
     return ViewModelBuilder.reactive(
         viewModelBuilder: () => HomeViewModel(),
-        onViewModelReady: (viewModel) => viewModel.bluetoothInit(),
+        onViewModelReady: (viewModel) => viewModel.init(),
         builder: (context, viewModel, child) => WillPopScope(
               onWillPop: viewModel.onBackPressed,
               child: Scaffold(
                 body: PageView(
                   controller: viewModel.pageViewController,
-                  children: [
-                    homeDestination(viewModel),
-                    bluetoothDestination(viewModel),
-                    profileDestination(viewModel),
-                    Text("Nothing")
-                  ],
+                  children: viewModel.isBusy
+                      ? [
+                          Container(
+                            alignment: Alignment.center,
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                    width: 64,
+                                    height: 64,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.black,
+                                      strokeWidth: 3,
+                                    )),
+                                Padding(
+                                    child: Text("Connecting to user"),
+                                    padding: EdgeInsets.only(top: 20)),
+                              ],
+                            ),
+                          )
+                        ]
+                      : [
+                          homeDestination(viewModel),
+                          bluetoothDestination(viewModel),
+                          profileDestination(viewModel),
+                          Text("Nothing")
+                        ],
                   onPageChanged: (value) {
                     viewModel.setIndex(value);
                     viewModel.onPageChanged(value);
                   },
                 ),
-                bottomNavigationBar: NavigationBar(
-                    indicatorColor: Colors.amber,
-                    onDestinationSelected: (value) {
-                      viewModel.setIndex(value);
-                      viewModel.onPageChanged(value);
-                      viewModel.pageViewController.animateToPage(value,
-                          duration: Duration(milliseconds: 200),
-                          curve: Curves.easeInOut);
-                    },
-                    selectedIndex: viewModel.currentIndex,
-                    destinations: const [
-                      NavigationDestination(
-                        label: "Home",
-                        selectedIcon: Icon(Icons.home),
-                        icon: Icon(Icons.home_outlined),
-                      ),
-                      NavigationDestination(
-                        label: "ESP32",
-                        icon: Icon(Icons.bluetooth),
-                      ),
-                      NavigationDestination(
-                        label: "Profile",
-                        icon: Icon(Icons.account_circle),
-                      ),
-                      NavigationDestination(
-                        label: "Notification",
-                        icon: Badge(child: Icon(Icons.notifications_sharp)),
-                      ),
-                    ]),
+                bottomNavigationBar: viewModel.isBusy
+                    ? SizedBox.shrink()
+                    : NavigationBar(
+                        indicatorColor: Colors.amber,
+                        onDestinationSelected: (value) {
+                          viewModel.setIndex(value);
+                          viewModel.onPageChanged(value);
+                          viewModel.pageViewController.animateToPage(value,
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.easeInOut);
+                        },
+                        selectedIndex: viewModel.currentIndex,
+                        destinations: const [
+                            NavigationDestination(
+                              label: "Home",
+                              selectedIcon: Icon(Icons.home),
+                              icon: Icon(Icons.home_outlined),
+                            ),
+                            NavigationDestination(
+                              label: "ESP32",
+                              icon: Icon(Icons.bluetooth),
+                            ),
+                            NavigationDestination(
+                              label: "Profile",
+                              icon: Icon(Icons.account_circle),
+                            ),
+                            NavigationDestination(
+                              label: "Notification",
+                              icon:
+                                  Badge(child: Icon(Icons.notifications_sharp)),
+                            ),
+                          ]),
               ),
             ));
   }
@@ -74,7 +98,70 @@ class HomeView extends StatelessWidget {
   }
 
   Widget bluetoothDestination(HomeViewModel viewModel) {
-    return const Text("Bluetooth");
+    // return const Text("Bluetooth");
+    return viewModel.busy(viewModel.scanningBluetooth)
+        ? Container(
+            alignment: Alignment.center,
+            child: Text("Scanning for devices"),
+          )
+        : Container(
+            padding: EdgeInsets.only(top: 40),
+            child: Column(
+              children: [
+                Text("Bluetooth Devices",
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ListView.builder(
+                    itemCount: viewModel.deviceList.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final device = viewModel.deviceList[index];
+
+                      return ListTile(
+                          leading: Icon(Icons.bluetooth, color: Colors.blue),
+                          title: Text(
+                            device.device.name ?? 'null',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            device.device.type.stringValue,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          trailing: ElevatedButton(
+                              onPressed: () => {},
+                              child: Text('Connect'),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.blue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                              )));
+                    }),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ElevatedButton(
+                        onPressed: viewModel.bluetoothScan,
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                MaterialStatePropertyAll<Color>(Colors.amber)),
+                        child: const Text(
+                          'Scan Bluetooth Devices',
+                          style: TextStyle(color: Colors.white),
+                        )),
+                  ),
+                ),
+              ],
+            ),
+          );
   }
 
   Widget profileDestination(HomeViewModel viewModel) {

@@ -9,7 +9,6 @@ import {
     IsDateString,
     IsNumberString,
 } from 'class-validator';
-import { vehicle_type } from 'src/enums/vehicleType_enum';
 
 export class CreateVehicleDto {
     @IsString()
@@ -34,5 +33,10 @@ export class CreateVehicleDto {
     @IsNumberString()
     @IsOptional()
     kilometres: number;
+}
+
+enum vehicle_type {
+    car = 'car',
+    motorcycle = 'motorcycle',
 }
 

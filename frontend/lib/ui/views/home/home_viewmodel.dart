@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:frontend/app/app.bottomsheets.dart';
 import 'package:frontend/app/app.dialogs.dart';
 import 'package:frontend/app/app.locator.dart';
 import 'package:frontend/app/app.router.dart';
+import 'package:frontend/models/user.model.dart';
 import 'package:frontend/services/authentication_service.dart';
 import 'package:frontend/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
@@ -26,6 +27,18 @@ class HomeViewModel extends IndexTrackingViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   final _navigationService = locator<NavigationService>();
 
+  final FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
+
+  late final List<BluetoothDiscoveryResult> _devicesList = [];
+  List<BluetoothDiscoveryResult> get deviceList => _devicesList;
+
+  BluetoothDevice? _device;
+  bool _connected = false;
+  bool _scanningBluetooth = false;
+  bool get scanningBluetooth => _scanningBluetooth;
+
+  BluetoothConnection? connection;
+
   final List<CarModelService> _carModelServices = [
     CarModelService(carName: 'Avanza', kmDistance: 300, timeDuration: 2),
     CarModelService(carName: 'BMW M3', kmDistance: 1512, timeDuration: 5),
@@ -42,50 +55,65 @@ class HomeViewModel extends IndexTrackingViewModel {
   int _counter = 0;
 
   late final bluetoothIsAvailable;
-  FlutterBlue flutterBlue = FlutterBlue.instance;
+
+  late final User user;
+
+  void init() async {
+    setBusy(true);
+    user = await _authenticationService.profile();
+    bluetoothInit();
+    setBusy(false);
+  }
 
   void bluetoothInit() async {
-    if (await flutterBlue.isAvailable) {
-      bluetoothIsAvailable = true;
-      await _dialogService.showCustomDialog(
-          variant: DialogType.success,
-          title: "Hooray you have a Bluetooth",
-          description: "You can use this to connect and claim your ESP32");
-    } else {
-      bluetoothIsAvailable = false;
-      await _dialogService.showCustomDialog(
-          variant: DialogType.error,
-          title: "damn you don't have a Bluetooth very sad",
-          description: "You cannot connect and claim your ESP32");
-      return;
-    }
+    // if (await FlutterBluePlus.isSupported == false) {
+    //   print("Bluetooth not supported by this device");
+    //   bluetoothIsAvailable = false;
+    //   await _dialogService.showCustomDialog(
+    //       variant: DialogType.error,
+    //       title: "damn you don't have a Bluetooth very sad",
+    //       description: "You cannot connect and claim your ESP32");
+    //   return;
+    // }
+
+    // bluetoothIsAvailable = true;
+    // await _dialogService.showCustomDialog(
+    //     variant: DialogType.success,
+    //     title: "Hooray you have a Bluetooth",
+    //     description: "You can use this to connect and claim your ESP32");
   }
 
-  void bluetoothScan() async {
-    if (bluetoothIsAvailable) {
-      // Start scanning
-      flutterBlue.startScan(timeout: Duration(seconds: 4));
-
-      // Listen to scan results
-      var subscription = flutterBlue.scanResults.listen((results) {
-        // do something with scan results
-        for (ScanResult r in results) {
-          print('${r.device.name} found! rssi: ${r.rssi}');
-        }
-      });
-
-      // Stop scanning
-      flutterBlue.stopScan();
-    }
-  }
-
-  void onPageChanged(int indexPage) {
+  void onPageChanged(int indexPage) async {
+    await bluetooth.cancelDiscovery();
     print(indexPage);
     print("Current index" + currentIndex.toString());
   }
 
+  Future<void> bluetoothScan() async {
+    _devicesList.clear();
+    setBusyForObject(_scanningBluetooth, false);
+    bluetooth.startDiscovery().listen((r) {
+      // Handle discovery results
+
+      if (r.device.name != null &&
+          r.device.type == BluetoothDeviceType.classic) {
+        print('${r.device.name} found! rssi: ${r.rssi}');
+        _devicesList.add(r);
+      }
+
+      rebuildUi();
+    }).onDone(() {
+      setBusyForObject(_scanningBluetooth, false);
+
+      // Handle when discovery is done
+    });
+  }
+
+  Future<void> bluetoothConnect(BluetoothDiscoveryResult device) async {
+    
+  }
+
   void logOutUser() async {
-    setBusy(true);
     try {
       print("Logout");
       await _authenticationService.logout();

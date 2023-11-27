@@ -14,7 +14,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import registerDto from './dto/registerUser.dto';
 import { LocalAuthGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
@@ -48,7 +48,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  async signIn(@Req() req: Request) {
+  async profile(@Req() req: requestWithUser) {
     const user = req.user;
     return await this.authService.getProfile(+user.sub);
   }

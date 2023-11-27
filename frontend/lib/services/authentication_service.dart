@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/app/app.locator.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
+import 'package:frontend/models/user.model.dart';
 
 class AuthenticationService {
   final storage = const FlutterSecureStorage();
@@ -15,6 +16,23 @@ class AuthenticationService {
   final Duration timeoutDuration = const Duration(seconds: 15);
 
   String get currentIP => localhostIPAndroid;
+
+  Future<User> profile() async {
+    try {
+      final accessToken = await storage.read(key: 'access_token');
+      if (accessToken == null) throw new Exception("Token has expired");
+      final response = await http.get(Uri.parse('$deployURL/auth/profile'),
+          headers: {
+            "Authorization": 'Bearer ${accessToken}'
+          }).timeout(timeoutDuration);
+      final user =
+          User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+      print(user);
+      return user;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> login(String email, String password) async {
     try {

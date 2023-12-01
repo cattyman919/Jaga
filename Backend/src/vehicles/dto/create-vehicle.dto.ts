@@ -33,6 +33,10 @@ export class CreateVehicleDto {
     @IsNumberString()
     @IsOptional()
     kilometres: number;
+
+    @IsNumberString()
+    @IsOptional()
+    model_id: number;
 }
 
 enum vehicle_type {

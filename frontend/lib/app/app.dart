@@ -9,6 +9,7 @@ import 'package:frontend/services/authentication_service.dart';
 import 'package:frontend/ui/views/signup/signup_view.dart';
 import 'package:frontend/ui/dialogs/error/error_dialog.dart';
 import 'package:frontend/ui/dialogs/success/success_dialog.dart';
+import 'package:frontend/services/api_service.dart';
 // @stacked-import
 
 @StackedApp(
@@ -24,6 +25,7 @@ import 'package:frontend/ui/dialogs/success/success_dialog.dart';
     LazySingleton(classType: DialogService),
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: AuthenticationService),
+    LazySingleton(classType: ApiService),
 // @stacked-service
   ],
   bottomsheets: [

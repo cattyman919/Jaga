@@ -17,22 +17,6 @@ class AuthenticationService {
 
   String get currentIP => localhostIPAndroid;
 
-  Future<User> profile() async {
-    try {
-      final accessToken = await storage.read(key: 'access_token');
-      if (accessToken == null) throw new Exception("Token has expired");
-      final response = await http.get(Uri.parse('$deployURL/auth/profile'),
-          headers: {
-            "Authorization": 'Bearer ${accessToken}'
-          }).timeout(timeoutDuration);
-      final user =
-          User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-      print(user);
-      return user;
-    } catch (e) {
-      rethrow;
-    }
-  }
 
   Future<void> login(String email, String password) async {
     try {

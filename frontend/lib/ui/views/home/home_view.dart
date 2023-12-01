@@ -89,10 +89,50 @@ class HomeView extends StatelessWidget {
         itemCount: viewModel.carModelServices.length,
         itemBuilder: (context, index) {
           final carModel = viewModel.carModelServices[index];
-          return ListTile(
-            title: Text(carModel.carName),
-            subtitle: Text(
-                'Next Services in next ${carModel.kmDistance} Km or ${carModel.timeDuration} months'),
+          return Card(
+            elevation: 2.0, // Adds a subtle shadow.
+            margin: EdgeInsets.all(8.0), // Spacing around the card.
+
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 10.0), // Padding inside the container.
+
+              child: Column(
+                  mainAxisSize: MainAxisSize
+                      .min, // Use the minimum space that the child widgets need.
+                  crossAxisAlignment: CrossAxisAlignment
+                      .center, // Center the text horizontally.
+                  children: [
+                    Image.network(
+                      viewModel.vehicleModels[0]
+                          .image_path, // Replace with your car image URL.
+                      width:
+                          100, // Width of the image, you might want to adjust this.
+                      height: 60, // Height of the image.
+                      fit: BoxFit
+                          .cover, // Fill the box without distorting the image.
+                    ),
+                    SizedBox(height: 10), // Spacing between image and text.
+                    Text(
+                      carModel.carName,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black, // Text color.
+                        fontWeight: FontWeight.bold, // Font weight.
+                        fontSize: 24.0, // Font size.
+                      ),
+                    ),
+                    Text(
+                      'Next Service in the next ${carModel.kmDistance} Km',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey[600], // Subtitle text color.
+                        fontSize: 18.0, // Subtitle font size.
+                      ),
+                    ),
+                  ]),
+            ),
           );
         });
   }
@@ -171,16 +211,16 @@ class HomeView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              "username",
+            Text(
+              viewModel.user.username!,
               textAlign: TextAlign.center,
             ),
-            const Text(
-              "Full Name",
+            Text(
+              viewModel.user.fullName ?? "null",
               textAlign: TextAlign.center,
             ),
-            const Text(
-              "email",
+            Text(
+              viewModel.user.email!,
               textAlign: TextAlign.center,
             ),
             FractionallySizedBox(

@@ -5,6 +5,8 @@ import 'package:frontend/app/app.dialogs.dart';
 import 'package:frontend/app/app.locator.dart';
 import 'package:frontend/app/app.router.dart';
 import 'package:frontend/models/user.model.dart';
+import 'package:frontend/models/vehicleModel.model.dart';
+import 'package:frontend/services/api_service.dart';
 import 'package:frontend/services/authentication_service.dart';
 import 'package:frontend/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
@@ -22,6 +24,7 @@ class CarModelService extends ChangeNotifier {
 }
 
 class HomeViewModel extends IndexTrackingViewModel {
+  final _APIService = locator<ApiService>();
   final _authenticationService = locator<AuthenticationService>();
   final _dialogService = locator<DialogService>();
   final _bottomSheetService = locator<BottomSheetService>();
@@ -42,6 +45,12 @@ class HomeViewModel extends IndexTrackingViewModel {
   final List<CarModelService> _carModelServices = [
     CarModelService(carName: 'Avanza', kmDistance: 300, timeDuration: 2),
     CarModelService(carName: 'BMW M3', kmDistance: 1512, timeDuration: 5),
+    CarModelService(carName: 'BMW M3', kmDistance: 1512, timeDuration: 5),
+    CarModelService(carName: 'BMW M3', kmDistance: 1512, timeDuration: 5),
+    CarModelService(carName: 'BMW M3', kmDistance: 1512, timeDuration: 5),
+    CarModelService(carName: 'BMW M3', kmDistance: 1512, timeDuration: 5),
+    CarModelService(carName: 'BMW M3', kmDistance: 1512, timeDuration: 5),
+    CarModelService(carName: 'BMW M3', kmDistance: 1512, timeDuration: 5),
   ];
 
   List<CarModelService> get carModelServices => _carModelServices;
@@ -57,11 +66,14 @@ class HomeViewModel extends IndexTrackingViewModel {
   late final bluetoothIsAvailable;
 
   late final User user;
-
+  late final List<VehicleModel> _vehicleModels;
+  List<VehicleModel> get vehicleModels => _vehicleModels;
+  
   void init() async {
     setBusy(true);
-    user = await _authenticationService.profile();
-    bluetoothInit();
+    user = await _APIService.profile();
+    _vehicleModels = await _APIService.getAllVehicleModels();
+    print(_vehicleModels);
     setBusy(false);
   }
 
@@ -109,9 +121,7 @@ class HomeViewModel extends IndexTrackingViewModel {
     });
   }
 
-  Future<void> bluetoothConnect(BluetoothDiscoveryResult device) async {
-    
-  }
+  Future<void> bluetoothConnect(BluetoothDiscoveryResult device) async {}
 
   void logOutUser() async {
     try {

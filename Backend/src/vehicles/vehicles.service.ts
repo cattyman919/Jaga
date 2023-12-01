@@ -25,7 +25,7 @@ export class VehiclesService {
   }
 
   async findAll() {
-    return await this.vehiclesRepository.find();
+    return await this.vehiclesRepository.find({ loadEagerRelations: true });
   }
 
   async findOneByName(name: string): Promise<Vehicle> {

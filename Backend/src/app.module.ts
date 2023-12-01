@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { DatabaseModule } from './database/database.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
+import { VehicleModelsModule } from './vehicle_models/vehicle_models.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { VehiclesModule } from './vehicles/vehicles.module';
     AuthModule,
     DatabaseModule,
     VehiclesModule,
+    VehicleModelsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

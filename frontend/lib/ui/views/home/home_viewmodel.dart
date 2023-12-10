@@ -5,6 +5,7 @@ import 'package:frontend/app/app.dialogs.dart';
 import 'package:frontend/app/app.locator.dart';
 import 'package:frontend/app/app.router.dart';
 import 'package:frontend/models/user.model.dart';
+import 'package:frontend/models/vehicle.model.dart';
 import 'package:frontend/models/vehicleModel.model.dart';
 import 'package:frontend/services/api_service.dart';
 import 'package:frontend/services/authentication_service.dart';
@@ -66,14 +67,13 @@ class HomeViewModel extends IndexTrackingViewModel {
   late final bluetoothIsAvailable;
 
   late final User user;
-  late final List<VehicleModel> _vehicleModels;
-  List<VehicleModel> get vehicleModels => _vehicleModels;
-  
+
+  late final List<Vehicle> vehicles;
+
   void init() async {
     setBusy(true);
     user = await _APIService.profile();
-    _vehicleModels = await _APIService.getAllVehicleModels();
-    print(_vehicleModels);
+    vehicles = await _APIService.getUserVehicles(user.id);
     setBusy(false);
   }
 
@@ -113,7 +113,7 @@ class HomeViewModel extends IndexTrackingViewModel {
         _devicesList.add(r);
       }
 
-      rebuildUi();
+      notifyListeners();
     }).onDone(() {
       setBusyForObject(_scanningBluetooth, false);
 
@@ -142,17 +142,16 @@ class HomeViewModel extends IndexTrackingViewModel {
     }
   }
 
-  void incrementCounter() {
-    _counter++;
-    rebuildUi();
-  }
-
   void showBottomSheet() {
     _bottomSheetService.showCustomSheet(
       variant: BottomSheetType.notice,
       title: ksHomeBottomSheetTitle,
       description: ksHomeBottomSheetDescription,
     );
+  }
+
+  void navigateToCarDetails(int idVehicle) {
+    _navigationService.navigateToDetailCarsView(idVehicle: idVehicle);
   }
 
   Future<bool> onBackPressed() async {

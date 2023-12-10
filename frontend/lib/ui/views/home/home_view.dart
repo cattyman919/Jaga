@@ -41,7 +41,7 @@ class HomeView extends StatelessWidget {
                           homeDestination(viewModel),
                           bluetoothDestination(viewModel),
                           profileDestination(viewModel),
-                          Text("Nothing")
+                          const Text("Nothing")
                         ],
                   onPageChanged: (value) {
                     viewModel.setIndex(value);
@@ -49,14 +49,14 @@ class HomeView extends StatelessWidget {
                   },
                 ),
                 bottomNavigationBar: viewModel.isBusy
-                    ? SizedBox.shrink()
+                    ? const SizedBox.shrink()
                     : NavigationBar(
                         indicatorColor: Colors.amber,
                         onDestinationSelected: (value) {
                           viewModel.setIndex(value);
                           viewModel.onPageChanged(value);
                           viewModel.pageViewController.animateToPage(value,
-                              duration: Duration(milliseconds: 200),
+                              duration: const Duration(milliseconds: 200),
                               curve: Curves.easeInOut);
                         },
                         selectedIndex: viewModel.currentIndex,
@@ -85,56 +85,94 @@ class HomeView extends StatelessWidget {
   }
 
   Widget homeDestination(HomeViewModel viewModel) {
-    return ListView.builder(
-        itemCount: viewModel.carModelServices.length,
-        itemBuilder: (context, index) {
-          final carModel = viewModel.carModelServices[index];
-          return Card(
-            elevation: 2.0, // Adds a subtle shadow.
-            margin: EdgeInsets.all(8.0), // Spacing around the card.
+    if (viewModel.vehicles.length == 0) {
+      return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          backgroundColor: Colors.amber,
+          child: const Icon(Icons.add),
+        ),
+        body: const Center(
+          child: Text(
+            "You have no cars!",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: Colors.amber,
+        child: const Icon(Icons.add),
+      ),
+      body: Column(children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: Text("Cars",
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        ),
+        Expanded(
+          child: ListView.builder(
+              itemCount: viewModel.vehicles.length,
+              itemBuilder: (context, index) {
+                final carModel = viewModel.vehicles[index];
+                return Card(
+                  elevation: 2.0, // Adds a subtle shadow.
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 30, vertical: 10), // Spacing around the card.
 
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 10.0), // Padding inside the container.
+                  child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 10.0), // Padding inside the container.
 
-              child: Column(
-                  mainAxisSize: MainAxisSize
-                      .min, // Use the minimum space that the child widgets need.
-                  crossAxisAlignment: CrossAxisAlignment
-                      .center, // Center the text horizontally.
-                  children: [
-                    Image.network(
-                      viewModel.vehicleModels[0]
-                          .image_path, // Replace with your car image URL.
-                      width:
-                          100, // Width of the image, you might want to adjust this.
-                      height: 60, // Height of the image.
-                      fit: BoxFit
-                          .cover, // Fill the box without distorting the image.
-                    ),
-                    SizedBox(height: 10), // Spacing between image and text.
-                    Text(
-                      carModel.carName,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black, // Text color.
-                        fontWeight: FontWeight.bold, // Font weight.
-                        fontSize: 24.0, // Font size.
-                      ),
-                    ),
-                    Text(
-                      'Next Service in the next ${carModel.kmDistance} Km',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey[600], // Subtitle text color.
-                        fontSize: 18.0, // Subtitle font size.
-                      ),
-                    ),
-                  ]),
-            ),
-          );
-        });
+                      child: ListTile(
+                        onTap: () =>
+                            viewModel.navigateToCarDetails(carModel.id),
+                        title: Column(
+                            mainAxisSize: MainAxisSize
+                                .min, // Use the minimum space that the child widgets need.
+                            crossAxisAlignment: CrossAxisAlignment
+                                .center, // Center the text horizontally.
+                            children: [
+                              Image.network(
+                                carModel.vehicleModel
+                                    .image_path, // Replace with your car image URL.
+                                width:
+                                    100, // Width of the image, you might want to adjust this.
+                                height: 60, // Height of the image.
+                                fit: BoxFit
+                                    .cover, // Fill the box without distorting the image.
+                              ),
+                              const SizedBox(
+                                  height:
+                                      10), // Spacing between image and text.
+                              Text(
+                                carModel.vehicleModel.model_name,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.black, // Text color.
+                                  fontWeight: FontWeight.bold, // Font weight.
+                                  fontSize: 24.0, // Font size.
+                                ),
+                              ),
+                              Text(
+                                'Next Service in the next ${carModel.kilometres} Km',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color:
+                                      Colors.grey[600], // Subtitle text color.
+                                  fontSize: 18.0, // Subtitle font size.
+                                ),
+                              ),
+                            ]),
+                      )),
+                );
+              }),
+        )
+      ]),
+    );
   }
 
   Widget bluetoothDestination(HomeViewModel viewModel) {
@@ -142,13 +180,13 @@ class HomeView extends StatelessWidget {
     return viewModel.busy(viewModel.scanningBluetooth)
         ? Container(
             alignment: Alignment.center,
-            child: Text("Scanning for devices"),
+            child: const Text("Scanning for devices"),
           )
         : Container(
-            padding: EdgeInsets.only(top: 40),
+            padding: const EdgeInsets.only(top: 40),
             child: Column(
               children: [
-                Text("Bluetooth Devices",
+                const Text("Bluetooth Devices",
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ListView.builder(
@@ -159,10 +197,11 @@ class HomeView extends StatelessWidget {
                       final device = viewModel.deviceList[index];
 
                       return ListTile(
-                          leading: Icon(Icons.bluetooth, color: Colors.blue),
+                          leading:
+                              const Icon(Icons.bluetooth, color: Colors.blue),
                           title: Text(
                             device.device.name ?? 'null',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -174,14 +213,14 @@ class HomeView extends StatelessWidget {
                           ),
                           trailing: ElevatedButton(
                               onPressed: () => {},
-                              child: Text('Connect'),
+                              child: const Text('Connect'),
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 backgroundColor: Colors.blue,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(18.0),
                                 ),
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                               )));
                     }),

@@ -7,7 +7,7 @@ class VehicleModel {
   VehicleModel.fromJson(Map<String, dynamic> json)
       : model_name = json["model_name"] as String,
         image_path = json["image_path"] as String;
-        
+
   Map<String, dynamic> toJson() => {
         'model_name': model_name,
         'image_path': image_path,

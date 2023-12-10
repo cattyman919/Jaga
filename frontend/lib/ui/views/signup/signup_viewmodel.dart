@@ -14,7 +14,7 @@ class SignupViewModel extends FormViewModel {
   final _dialogService = locator<DialogService>();
 
   void toLoginPage() async {
-    _navigationService.navigateWithTransition(const LoginView(),
+    _navigationService.replaceWithTransition(const LoginView(),
         transitionStyle: Transition.upToDown,
         curve: Curves.easeInOut,
         duration: const Duration(milliseconds: 500),

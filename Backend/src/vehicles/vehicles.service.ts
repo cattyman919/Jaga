@@ -13,7 +13,7 @@ export class VehiclesService {
     @InjectRepository(Vehicle)
     private vehiclesRepository: Repository<Vehicle>,
     private readonly userService: UserService,
-  ) { }
+  ) {}
 
   async create(createVehicleDto: CreateVehicleDto) {
     // Find if user Id is valid
@@ -32,13 +32,18 @@ export class VehiclesService {
     return await this.vehiclesRepository.findOneBy({ name });
   }
 
-  async findOneVehicleByUserID(userID: number): Promise<Vehicle> {
-    return await this.vehiclesRepository.findOneBy({ userID });
+  async findOneVehicleByUserID(userID: number): Promise<Vehicle[]> {
+    const vehicle = await this.vehiclesRepository.findBy({ userID });
+    if (vehicle) return vehicle;
+    throw new HttpException(
+      'Vehicle with this User ID does not exist',
+      HttpStatus.NOT_FOUND,
+    );
   }
 
   async findOneByID(id: number) {
     const vehicle = await this.vehiclesRepository.findOneBy({ id });
-    if (vehicle) return vehicle
+    if (vehicle) return vehicle;
     throw new HttpException(
       'Vehicle with this id does not exist',
       HttpStatus.NOT_FOUND,
@@ -49,7 +54,7 @@ export class VehiclesService {
     const { kilometres, name, type, years } = updateVehicleDto;
 
     if (kilometres == null && name == null && type == null && years == null) {
-      throw new HttpException("Body is empty!", HttpStatus.BAD_REQUEST);
+      throw new HttpException('Body is empty!', HttpStatus.BAD_REQUEST);
     }
 
     await this.findOneByID(id);
@@ -70,8 +75,8 @@ export class VehiclesService {
       throw error;
     }
     return {
-      "message": `Vehicle with id ${id} has been deleted`,
-      "status": "SUCCESS"
+      message: `Vehicle with id ${id} has been deleted`,
+      status: 'SUCCESS',
     };
   }
 }

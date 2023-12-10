@@ -43,7 +43,7 @@ class LoginViewModel extends FormViewModel {
   }
 
   void goToSignUp() async {
-    await _navigationService.navigateWithTransition(const SignupView(),
+    await _navigationService.replaceWithTransition(const SignupView(),
         transitionStyle: Transition.downToUp,
         curve: Curves.easeInOut,
         duration: const Duration(milliseconds: 500),
@@ -51,7 +51,7 @@ class LoginViewModel extends FormViewModel {
   }
 
   void goToHomePage() async {
-    await _navigationService.navigateWithTransition(const HomeView(),
+    await _navigationService.replaceWithTransition(const HomeView(),
         transitionStyle: Transition.rightToLeft,
         curve: Curves.easeInOut,
         duration: const Duration(milliseconds: 500),

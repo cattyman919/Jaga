@@ -9,6 +9,8 @@ import 'dart:ui' as _i7;
 import 'package:flutter/material.dart' as _i5;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i2;
 import 'package:frontend/models/user.model.dart' as _i3;
+import 'package:frontend/models/vehicle.model.dart' as _i11;
+import 'package:frontend/models/vehicleModel.model.dart' as _i10;
 import 'package:frontend/services/api_service.dart' as _i9;
 import 'package:frontend/services/authentication_service.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
@@ -747,28 +749,6 @@ class MockAuthenticationService extends _i1.Mock
       ) as String);
 
   @override
-  _i6.Future<_i3.User> profile() => (super.noSuchMethod(
-        Invocation.method(
-          #profile,
-          [],
-        ),
-        returnValue: _i6.Future<_i3.User>.value(_FakeUser_2(
-          this,
-          Invocation.method(
-            #profile,
-            [],
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i3.User>.value(_FakeUser_2(
-          this,
-          Invocation.method(
-            #profile,
-            [],
-          ),
-        )),
-      ) as _i6.Future<_i3.User>);
-
-  @override
   _i6.Future<void> login(
     String? email,
     String? password,
@@ -828,4 +808,98 @@ class MockAuthenticationService extends _i1.Mock
 /// A class which mocks [ApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockApiService extends _i1.Mock implements _i9.ApiService {}
+class MockApiService extends _i1.Mock implements _i9.ApiService {
+  @override
+  _i2.FlutterSecureStorage get storage => (super.noSuchMethod(
+        Invocation.getter(#storage),
+        returnValue: _FakeFlutterSecureStorage_0(
+          this,
+          Invocation.getter(#storage),
+        ),
+        returnValueForMissingStub: _FakeFlutterSecureStorage_0(
+          this,
+          Invocation.getter(#storage),
+        ),
+      ) as _i2.FlutterSecureStorage);
+
+  @override
+  String get localhostIP => (super.noSuchMethod(
+        Invocation.getter(#localhostIP),
+        returnValue: '',
+        returnValueForMissingStub: '',
+      ) as String);
+
+  @override
+  String get deployURL => (super.noSuchMethod(
+        Invocation.getter(#deployURL),
+        returnValue: '',
+        returnValueForMissingStub: '',
+      ) as String);
+
+  @override
+  Duration get timeoutDuration => (super.noSuchMethod(
+        Invocation.getter(#timeoutDuration),
+        returnValue: _FakeDuration_1(
+          this,
+          Invocation.getter(#timeoutDuration),
+        ),
+        returnValueForMissingStub: _FakeDuration_1(
+          this,
+          Invocation.getter(#timeoutDuration),
+        ),
+      ) as Duration);
+
+  @override
+  String get currentURL => (super.noSuchMethod(
+        Invocation.getter(#currentURL),
+        returnValue: '',
+        returnValueForMissingStub: '',
+      ) as String);
+
+  @override
+  _i6.Future<_i3.User> profile() => (super.noSuchMethod(
+        Invocation.method(
+          #profile,
+          [],
+        ),
+        returnValue: _i6.Future<_i3.User>.value(_FakeUser_2(
+          this,
+          Invocation.method(
+            #profile,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i6.Future<_i3.User>.value(_FakeUser_2(
+          this,
+          Invocation.method(
+            #profile,
+            [],
+          ),
+        )),
+      ) as _i6.Future<_i3.User>);
+
+  @override
+  _i6.Future<List<_i10.VehicleModel>> getAllVehicleModels() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAllVehicleModels,
+          [],
+        ),
+        returnValue:
+            _i6.Future<List<_i10.VehicleModel>>.value(<_i10.VehicleModel>[]),
+        returnValueForMissingStub:
+            _i6.Future<List<_i10.VehicleModel>>.value(<_i10.VehicleModel>[]),
+      ) as _i6.Future<List<_i10.VehicleModel>>);
+
+  @override
+  _i6.Future<List<_i11.Vehicle>> getUserVehicles(int? userID) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserVehicles,
+          [userID],
+        ),
+        returnValue: _i6.Future<List<_i11.Vehicle>>.value(<_i11.Vehicle>[]),
+        returnValueForMissingStub:
+            _i6.Future<List<_i11.Vehicle>>.value(<_i11.Vehicle>[]),
+      ) as _i6.Future<List<_i11.Vehicle>>);
+}

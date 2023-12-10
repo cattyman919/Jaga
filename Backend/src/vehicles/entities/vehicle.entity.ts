@@ -1,9 +1,11 @@
+import { Service } from 'src/service/entities/service.entity';
 import { User } from 'src/user/entities/user.entity';
 import { VehicleModel } from 'src/vehicle_models/entities/vehicle_model.entity';
 import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -45,11 +47,17 @@ export class Vehicle {
     onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'model_id' })
-  vehicleModel: VehicleModel
+  vehicleModel: VehicleModel;
+
+  @ManyToOne(() => Service, (service) => service.vehicles, {
+    eager: true,
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'service_id' })
+  services: Service;
 }
 
 enum vehicle_type {
   car = 'car',
   motorcycle = 'motorcycle',
 }
-

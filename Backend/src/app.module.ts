@@ -8,6 +8,7 @@ import * as Joi from 'joi';
 import { DatabaseModule } from './database/database.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { VehicleModelsModule } from './vehicle_models/vehicle_models.module';
+import { ServiceModule } from './service/service.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { VehicleModelsModule } from './vehicle_models/vehicle_models.module';
     DatabaseModule,
     VehiclesModule,
     VehicleModelsModule,
+    ServiceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

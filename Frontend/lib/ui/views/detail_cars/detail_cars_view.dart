@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/service.model.dart';
+import 'package:frontend/ui/common/ui_helpers.dart';
 import 'package:stacked/stacked.dart';
 
 import 'detail_cars_viewmodel.dart';
@@ -17,12 +18,46 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
   ) {
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 15),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Overdue Services"),
-            Expanded(child: overdueServices(viewModel)),
-            Text("Upcoming Services"),
+            viewModel.isBusy
+                ? loadingSpinner()
+                : Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          viewModel.vehicle.vehicleModel
+                              .image_path, // Replace with your car image URL.
+                          width:
+                              200, // Width of the image, you might want to adjust this.
+                          height: 100, // Height of the image.
+                          fit: BoxFit
+                              .cover, // Fill the box without distorting the image.
+                        ),
+                        Text(
+                          viewModel.vehicle.vehicleModel.model_name,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.black, // Text color.
+                            fontWeight: FontWeight.bold, // Font weight.
+                            fontSize: 24.0, // Font size.
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+            verticalSpaceMedium,
+            Text(
+              "Overdue Services",
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            ),
+            overdueServices(viewModel),
+            verticalSpaceMedium,
+            Text("Upcoming Services",
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
             Expanded(child: upcomingServices(viewModel))
             // Expanded(child: overdueServices(viewModel))
           ],
@@ -48,7 +83,7 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
           return Card(
             elevation: 2.0, // Adds a subtle shadow.
             margin: const EdgeInsets.symmetric(
-                horizontal: 30, vertical: 10), // Spacing around the card.
+                vertical: 10), // Spacing around the card.
 
             child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -60,24 +95,22 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
                       mainAxisSize: MainAxisSize
                           .min, // Use the minimum space that the child widgets need.
                       crossAxisAlignment: CrossAxisAlignment
-                          .center, // Center the text horizontally.
+                          .start, // Center the text horizontally.
                       children: [
                         // Spacing between image and text.
                         Text(
                           overdue!.name,
-                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.black, // Text color.
                             fontWeight: FontWeight.bold, // Font weight.
                             fontSize: 24.0, // Font size.
                           ),
                         ),
+                        verticalSpaceSmall,
                         Text(
                           overdue.nextServiceAt,
-                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.grey[600], // Subtitle text color.
-                            fontSize: 18.0, // Subtitle font size.
                           ),
                         ),
                       ]),
@@ -104,7 +137,7 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
           return Card(
             elevation: 2.0, // Adds a subtle shadow.
             margin: const EdgeInsets.symmetric(
-                horizontal: 30, vertical: 10), // Spacing around the card.
+                vertical: 10), // Spacing around the card.
 
             child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -116,24 +149,22 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
                       mainAxisSize: MainAxisSize
                           .min, // Use the minimum space that the child widgets need.
                       crossAxisAlignment: CrossAxisAlignment
-                          .center, // Center the text horizontally.
+                          .start, // Center the text horizontally.
                       children: [
                         // Spacing between image and text.
                         Text(
                           overdue!.name,
-                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.black, // Text color.
                             fontWeight: FontWeight.bold, // Font weight.
                             fontSize: 24.0, // Font size.
                           ),
                         ),
+                        verticalSpaceSmall,
                         Text(
                           overdue.nextServiceAt,
-                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.grey[600], // Subtitle text color.
-                            fontSize: 18.0, // Subtitle font size.
                           ),
                         ),
                       ]),

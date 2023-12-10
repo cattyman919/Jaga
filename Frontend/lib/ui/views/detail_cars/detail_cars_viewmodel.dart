@@ -13,7 +13,7 @@ class DetailCarsViewModel extends BaseViewModel {
 
   List<ServiceItem> services = [
     ServiceItem(
-        name: 'Brake Canvass',
+        name: 'Brake Canvas',
         nextServiceAt: 'Overdue! Go to service immediately.',
         type: ServiceType.overdue),
     ServiceItem(
@@ -27,7 +27,9 @@ class DetailCarsViewModel extends BaseViewModel {
   ];
 
   void init() async {
+    setBusy(true);
     vehicle = await _APIService.getVehicleID(idVehicle);
+    setBusy(false);
     print(vehicle.name);
   }
 }

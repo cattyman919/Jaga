@@ -221,7 +221,9 @@ class HomeView extends StatelessWidget {
                             ),
                           ),
                           trailing: ElevatedButton(
-                              onPressed: () => {},
+                              onPressed: () {
+                                viewModel.bluetoothConnect(device);
+                              },
                               child: const Text('Connect'),
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,

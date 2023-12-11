@@ -45,7 +45,30 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
                             fontWeight: FontWeight.bold, // Font weight.
                             fontSize: 24.0, // Font size.
                           ),
-                        )
+                        ),
+                        verticalSpaceTiny,
+                        RichText(
+                          text: TextSpan(
+                            text: 'Distances Traveled ',
+                            style: TextStyle(
+                              color: Colors.black, // Subtitle text color.
+                              fontSize: 18.0, // Subtitle font size.
+                            ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: '${viewModel.vehicle.kilometres / 1000} ',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(
+                                text: 'Km',
+                                style: TextStyle(
+                                  color: Colors.black, // Subtitle text color.
+                                  fontSize: 18.0, // Subtitle font size.
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -58,7 +81,7 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
             verticalSpaceMedium,
             Text("Upcoming Services",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-            Expanded(child: upcomingServices(viewModel))
+            Expanded(child: upcomingServices(viewModel)),
             // Expanded(child: overdueServices(viewModel))
           ],
         ),
@@ -67,115 +90,133 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
   }
 
   Widget overdueServices(DetailCarsViewModel viewModel) {
-    List<ServiceItem?> overdueServices =
-        viewModel.services.where((e) => e.type == ServiceType.overdue).toList();
-    if (overdueServices.isEmpty) {
-      return Center(
-        child: Text("There is no overdue services"),
-      );
-    }
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: overdueServices.length,
-        itemBuilder: (context, index) {
-          final overdue = overdueServices[index];
-          return Card(
-            elevation: 2.0, // Adds a subtle shadow.
-            margin: const EdgeInsets.symmetric(
-                vertical: 10), // Spacing around the card.
+    if (!viewModel.isBusy) {
+      List<ServiceItem?> overdueServices = viewModel.vehicle.services
+          .where((e) => e.type == ServiceType.overdue)
+          .toList();
+      if (overdueServices.isEmpty) {
+        return Expanded(
+          child: Center(
+            child: Text(
+              "There is no overdue services",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+          ),
+        );
+      }
+      return ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: overdueServices.length,
+          itemBuilder: (context, index) {
+            final overdue = overdueServices[index];
+            return Card(
+              elevation: 2.0, // Adds a subtle shadow.
+              margin: const EdgeInsets.symmetric(
+                  vertical: 10), // Spacing around the card.
 
-            child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 10.0), // Padding inside the container.
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color.fromARGB(255, 255, 77, 77),
-                ),
-                child: ListTile(
-                  title: Column(
-                      mainAxisSize: MainAxisSize
-                          .min, // Use the minimum space that the child widgets need.
-                      crossAxisAlignment: CrossAxisAlignment
-                          .start, // Center the text horizontally.
-                      children: [
-                        // Spacing between image and text.
-                        Text(
-                          overdue!.name,
-                          style: const TextStyle(
-                            color: Colors.black, // Text color.
-                            fontWeight: FontWeight.bold, // Font weight.
-                            fontSize: 24.0, // Font size.
+              child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 10.0), // Padding inside the container.
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: const Color.fromARGB(255, 255, 77, 77),
+                  ),
+                  child: ListTile(
+                    title: Column(
+                        mainAxisSize: MainAxisSize
+                            .min, // Use the minimum space that the child widgets need.
+                        crossAxisAlignment: CrossAxisAlignment
+                            .start, // Center the text horizontally.
+                        children: [
+                          // Spacing between image and text.
+                          Text(
+                            overdue!.title,
+                            style: const TextStyle(
+                              color: Colors.black, // Text color.
+                              fontWeight: FontWeight.bold, // Font weight.
+                              fontSize: 24.0, // Font size.
+                            ),
                           ),
-                        ),
-                        verticalSpaceSmall,
-                        Text(
-                          overdue.nextServiceAt,
-                          style: TextStyle(
-                            color: Colors.black, // Subtitle text color.
+                          verticalSpaceSmall,
+                          Text(
+                            overdue.description,
+                            style: TextStyle(
+                              color: Colors.black, // Subtitle text color.
+                            ),
                           ),
-                        ),
-                      ]),
-                )),
-          );
-        });
+                        ]),
+                  )),
+            );
+          });
+    }
+    return loadingSpinner();
   }
 
   Widget upcomingServices(DetailCarsViewModel viewModel) {
-    List<ServiceItem?> upcomingServices = viewModel.services
-        .where((e) => e.type == ServiceType.upcoming)
-        .toList();
-    if (upcomingServices.isEmpty) {
-      return Center(
-        child: Text("There is no upcoming services"),
-      );
-    }
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: upcomingServices.length,
-        itemBuilder: (context, index) {
-          final overdue = upcomingServices[index];
-          return Card(
-            elevation: 2.0, // Adds a subtle shadow.
-            margin: const EdgeInsets.symmetric(
-                vertical: 10), // Spacing around the card.
+    if (!viewModel.isBusy) {
+      List<ServiceItem?> upcomingServices = viewModel.vehicle.services
+          .where((e) => e.type == ServiceType.upcoming)
+          .toList();
+      if (upcomingServices.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: Center(
+            child: Text(
+              "There is no upcomming services",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+          ),
+        );
+      }
+      return ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: upcomingServices.length,
+          itemBuilder: (context, index) {
+            final overdue = upcomingServices[index];
+            return Card(
+              elevation: 2.0, // Adds a subtle shadow.
+              margin: const EdgeInsets.symmetric(
+                  vertical: 10), // Spacing around the card.
 
-            child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 10.0), // Padding inside the container.
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ListTile(
-                  title: Column(
-                      mainAxisSize: MainAxisSize
-                          .min, // Use the minimum space that the child widgets need.
-                      crossAxisAlignment: CrossAxisAlignment
-                          .start, // Center the text horizontally.
-                      children: [
-                        // Spacing between image and text.
-                        Text(
-                          overdue!.name,
-                          style: const TextStyle(
-                            color: Colors.black, // Text color.
-                            fontWeight: FontWeight.bold, // Font weight.
-                            fontSize: 24.0, // Font size.
+              child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 10.0), // Padding inside the container.
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListTile(
+                    title: Column(
+                        mainAxisSize: MainAxisSize
+                            .min, // Use the minimum space that the child widgets need.
+                        crossAxisAlignment: CrossAxisAlignment
+                            .start, // Center the text horizontally.
+                        children: [
+                          // Spacing between image and text.
+                          Text(
+                            overdue!.title,
+                            style: const TextStyle(
+                              color: Colors.black, // Text color.
+                              fontWeight: FontWeight.bold, // Font weight.
+                              fontSize: 24.0, // Font size.
+                            ),
                           ),
-                        ),
-                        verticalSpaceSmall,
-                        Text(
-                          overdue.nextServiceAt,
-                          style: TextStyle(
-                            color: Colors.grey[600], // Subtitle text color.
+                          verticalSpaceSmall,
+                          Text(
+                            overdue.description,
+                            style: TextStyle(
+                              color: Colors.grey[600], // Subtitle text color.
+                            ),
                           ),
-                        ),
-                      ]),
-                )),
-          );
-        });
+                        ]),
+                  )),
+            );
+          });
+    }
+    return loadingSpinner();
   }
 
   Widget loadingSpinner() {

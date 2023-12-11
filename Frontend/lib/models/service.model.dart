@@ -1,10 +1,20 @@
 class ServiceItem {
-  final String name;
-  final String nextServiceAt;
+  final int? id;
+  final String title;
+  final String description;
   final String type;
 
   ServiceItem(
-      {required this.name, required this.nextServiceAt, required this.type});
+      {this.id,
+      required this.title,
+      required this.description,
+      required this.type});
+
+  ServiceItem.fromJson(Map<String, dynamic> json)
+      : id = json["id"] as int,
+        title = json["title"] as String,
+        description = json["description"] as String,
+        type = json["type"] as String;
 }
 
 class ServiceType {

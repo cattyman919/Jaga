@@ -12,7 +12,7 @@ export class ServiceService {
     @InjectRepository(Service)
     private serviceRepository: Repository<Service>,
     private readonly vehicleService: VehiclesService,
-  ) {}
+  ) { }
 
   async create(createServiceDto: CreateServiceDto) {
     const vehicle = await this.vehicleService.findOneByID(
@@ -41,6 +41,11 @@ export class ServiceService {
   }
 
   async remove(id: number) {
-    return await this.serviceRepository.delete({ id });
+    try {
+      await this.serviceRepository.delete({ id })
+    } catch (error) {
+      throw error;
+    }
+    return;
   }
 }

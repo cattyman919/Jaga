@@ -139,7 +139,12 @@ class HomeViewModel extends IndexTrackingViewModel {
     });
   }
 
-  Future<void> bluetoothConnect(BluetoothDiscoveryResult device) async {}
+  Future<void> bluetoothConnect(BluetoothDiscoveryResult device) async {
+    await Future.delayed(Duration(seconds: 3));
+    await _dialogService.showCustomDialog(
+        variant: DialogType.success,
+        description: "Bluetooth Connection Successful");
+  }
 
   void logOutUser() async {
     try {

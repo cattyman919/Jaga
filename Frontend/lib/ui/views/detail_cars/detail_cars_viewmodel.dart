@@ -13,16 +13,16 @@ class DetailCarsViewModel extends BaseViewModel {
 
   List<ServiceItem> services = [
     ServiceItem(
-        name: 'Brake Canvas',
-        nextServiceAt: 'Overdue! Go to service immediately.',
+        title: 'Brake Canvas',
+        description: 'Overdue! Go to service immediately.',
         type: ServiceType.overdue),
     ServiceItem(
-        name: 'Oil Filter',
-        nextServiceAt: 'Next Replacement in next 300 Km or 2 months',
+        title: 'Oil Filter',
+        description: 'Next Replacement in next 300 Km or 2 months',
         type: ServiceType.upcoming),
     ServiceItem(
-        name: 'AC Filter',
-        nextServiceAt: 'Changed on 23441 Km on 21/08/2023',
+        title: 'AC Filter',
+        description: 'Changed on 23441 Km on 21/08/2023',
         type: ServiceType.upcoming),
   ];
 

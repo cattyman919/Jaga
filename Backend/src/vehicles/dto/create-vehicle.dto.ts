@@ -11,9 +11,6 @@ import {
 } from 'class-validator';
 
 export class CreateVehicleDto {
-    @IsString()
-    @IsNotEmpty()
-    name: string;
 
     @IsNumberString()
     @IsNotEmpty()
@@ -28,7 +25,7 @@ export class CreateVehicleDto {
 
     @IsDateString()
     @IsNotEmpty()
-    years: Date;
+    date: Date;
 
     @IsNumberString()
     @IsOptional()

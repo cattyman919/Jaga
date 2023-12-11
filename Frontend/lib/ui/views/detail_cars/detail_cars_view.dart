@@ -89,7 +89,10 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16.0,
                     vertical: 10.0), // Padding inside the container.
-
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color.fromARGB(255, 255, 77, 77),
+                ),
                 child: ListTile(
                   title: Column(
                       mainAxisSize: MainAxisSize
@@ -110,7 +113,7 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
                         Text(
                           overdue.nextServiceAt,
                           style: TextStyle(
-                            color: Colors.grey[600], // Subtitle text color.
+                            color: Colors.black, // Subtitle text color.
                           ),
                         ),
                       ]),
@@ -125,7 +128,7 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
         .toList();
     if (upcomingServices.isEmpty) {
       return Center(
-        child: Text("There is no overdue services"),
+        child: Text("There is no upcoming services"),
       );
     }
     return ListView.builder(
@@ -143,7 +146,9 @@ class DetailCarsView extends StackedView<DetailCarsViewModel> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16.0,
                     vertical: 10.0), // Padding inside the container.
-
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: ListTile(
                   title: Column(
                       mainAxisSize: MainAxisSize

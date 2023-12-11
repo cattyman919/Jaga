@@ -10,7 +10,7 @@ class AuthenticationService {
   final _dialogService = locator<DialogService>();
   final localhostIP = "http://192.168.1.18:3000";
   final localhostIPAndroid = 'http://10.0.2.2:3000';
-  final deployURL = "https://jaga-backend.vercel.app";
+  final deployURL = "https://jaga-eight.vercel.app";
 
   final Duration timeoutDuration = const Duration(seconds: 15);
 

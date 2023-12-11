@@ -13,10 +13,10 @@ import 'package:http/http.dart' as http;
 class ApiService {
   final storage = const FlutterSecureStorage();
   final _dialogService = locator<DialogService>();
-  final localhostIP = "http://192.168.137.1:3000";
-  final deployURL = "https://jaga-backend.vercel.app";
+  final localhostIP = "http://192.168.56.101:3000";
+  final deployURL = "https://jaga-eight.vercel.app";
 
-  String get currentURL => localhostIP;
+  String get currentURL => deployURL;
 
   final Duration timeoutDuration = const Duration(seconds: 15);
 
@@ -101,6 +101,41 @@ class ApiService {
       var vehicle = Vehicle.fromJson(body as Map<String, dynamic>);
 
       return vehicle;
+    } catch (e) {
+      await _dialogService.showCustomDialog(
+          variant: DialogType.error, description: '${e}');
+      rethrow;
+    }
+  }
+
+  Future<dynamic> createVehicle({
+    required int userID,
+    required DateTime date,
+    required int modelID,
+  }) async {
+    try {
+      final accessToken = await storage.read(key: 'access_token');
+      if (accessToken == null) throw new Exception("Token has expired");
+
+      final response =
+          await http.post(Uri.parse('$currentURL/vehicles'), body: {
+        'userID': userID.toString(),
+        'model_id': modelID.toString(),
+        'date': date.toIso8601String(),
+        'type': 'car',
+        'kilometres': '0',
+      }, headers: {
+        "Authorization": 'Bearer ${accessToken}'
+      }).timeout(timeoutDuration);
+      final body = jsonDecode(response.body);
+      if (response.statusCode == 201) {
+        print("SUCCESS");
+        return {
+          'message': 'SUCESS',
+        };
+      } else {
+        throw body['message'];
+      }
     } catch (e) {
       await _dialogService.showCustomDialog(
           variant: DialogType.error, description: '${e}');

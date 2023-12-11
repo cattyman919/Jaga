@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/vehicleModel.model.dart';
 import 'package:frontend/ui/common/app_colors.dart';
 import 'package:frontend/ui/common/ui_helpers.dart';
+import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -32,63 +34,97 @@ class NewCarDialog extends StackedView<NewCarDialogModel> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        request.title ?? 'Hello Stacked Dialog!!',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      if (request.description != null) ...[
-                        verticalSpaceTiny,
-                        Text(
-                          request.description!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: kcMediumGrey,
+                viewModel.isBusy
+                    ? loadingSpinner()
+                    : Center(
+                        child: Column(children: [
+                          Image.network(
+                            viewModel.selectedVehicleModel
+                                .image_path, // Replace with your car image URL.
+                            width:
+                                200, // Width of the image, you might want to adjust this.
+                            height: 100, // Height of the image.
+                            fit: BoxFit
+                                .cover, // Fill the box without distorting the image.
                           ),
-                          maxLines: 3,
-                          softWrap: true,
-                        ),
-                      ],
-                    ],
+                          verticalSpaceMedium,
+                          DropdownMenu<String>(
+                            controller: viewModel.vehicleModelOptions,
+                            onSelected: viewModel.setVehicleModel,
+                            initialSelection:
+                                viewModel.vehicleModels[0].model_name,
+                            textStyle: const TextStyle(color: Colors.white),
+                            menuStyle: MenuStyle(
+                              backgroundColor: MaterialStatePropertyAll<Color>(
+                                  Colors.grey[900]!),
+                            ),
+                            inputDecorationTheme: const InputDecorationTheme(
+                              filled: true,
+                              floatingLabelStyle:
+                                  TextStyle(color: Colors.white),
+                              border: InputBorder.none,
+                              fillColor: Color.fromARGB(255, 50, 45, 45),
+                            ),
+                            dropdownMenuEntries: viewModel.vehicleModels
+                                .map<DropdownMenuEntry<String>>((e) {
+                              return DropdownMenuEntry<String>(
+                                  value: e.model_name,
+                                  label: e.model_name,
+                                  style: MenuItemButton.styleFrom(
+                                    backgroundColor: Colors.grey[900],
+                                    foregroundColor: Colors.white,
+                                  ));
+                            }).toList(),
+                          ),
+                        ]),
+                      ),
+                verticalSpaceMedium,
+                const Text(
+                  'Date',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
-                Container(
-                  width: _graphicSize,
-                  height: _graphicSize,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF6E7B0),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(_graphicSize / 2),
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text('⭐️', style: TextStyle(fontSize: 30)),
-                )
+                verticalSpaceSmall,
+                TextFormField(
+                  style: const TextStyle(fontSize: 20),
+                  textAlign: TextAlign.center,
+                  enabled: false,
+                  keyboardType: TextInputType.text,
+                  controller: viewModel.dateTimeController,
+                  decoration: const InputDecoration(
+                      disabledBorder:
+                          UnderlineInputBorder(borderSide: BorderSide.none)),
+                ),
+                verticalSpaceSmall,
+                ElevatedButton(
+                    onPressed: () {
+                      _selectDate(context, viewModel);
+                    },
+                    child: const Text('Select Date')),
               ],
             ),
             verticalSpaceMedium,
             GestureDetector(
-              onTap: () => completer(DialogResponse(confirmed: true)),
+              onTap: () {
+                viewModel.submitCreateNewCars(request.data);
+                completer(DialogResponse(confirmed: true));
+              },
               child: Container(
                 height: 50,
                 width: double.infinity,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Colors.green,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Text(
-                  'Got it',
+                  'Submit',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -101,6 +137,55 @@ class NewCarDialog extends StackedView<NewCarDialogModel> {
         ),
       ),
     );
+  }
+
+  Future<Null> _selectDate(
+      BuildContext context, NewCarDialogModel viewModel) async {
+    viewModel.dateTimeController.text =
+        DateFormat.yMd().format(viewModel.selectedDate);
+
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: viewModel.selectedDate,
+        initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2101));
+
+    if (picked != null) {
+      viewModel.selectedDate = picked;
+      viewModel.dateTimeController.text =
+          DateFormat.yMd().format(viewModel.selectedDate);
+    }
+  }
+
+  Widget loadingSpinner() {
+    return Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsetsDirectional.only(top: 30),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+                width: 64,
+                height: 64,
+                child: CircularProgressIndicator(
+                  color: Colors.grey,
+                  strokeWidth: 3,
+                )),
+            Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: Text(
+                  "Fetching data...",
+                  style: TextStyle(color: Colors.white, fontSize: 17),
+                )),
+          ],
+        ));
+  }
+
+  @override
+  void onViewModelReady(NewCarDialogModel viewModel) {
+    viewModel.init();
+    super.onViewModelReady(viewModel);
   }
 
   @override

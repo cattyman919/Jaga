@@ -3,8 +3,7 @@ import { IsString, IsNotEmpty, IsOptional, IsDateString, IsEnum, IsNumberString 
 import { CreateVehicleDto } from './create-vehicle.dto';
 
 export class UpdateVehicleDto extends OmitType(CreateVehicleDto, ['userID'] as const) {
-    @IsOptional()
-    name: string;
+
 
     @IsOptional()
     kilometres: number;
@@ -13,7 +12,7 @@ export class UpdateVehicleDto extends OmitType(CreateVehicleDto, ['userID'] as c
     type: vehicle_type;
 
     @IsOptional()
-    years: Date;
+    date: Date;
 
 }
 enum vehicle_type {

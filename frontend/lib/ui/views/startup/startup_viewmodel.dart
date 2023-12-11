@@ -13,7 +13,7 @@ class StartupViewModel extends BaseViewModel {
     // 2. Check if the user is logged in
     if (await _authenticationService.isLoggedIn()) {
       // 3. Navigate to Sign up View
-      _navigationService.replaceWith(Routes.homeView);
+      _navigationService.replaceWith(Routes.loginView);
     } else {
       // 4. Or navigate to Login View
       _navigationService.replaceWith(Routes.loginView);

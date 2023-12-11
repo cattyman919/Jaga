@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/ui/common/ui_helpers.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:stacked/stacked.dart';
 import 'home_viewmodel.dart';
 
@@ -16,93 +18,71 @@ class HomeView extends StatelessWidget {
               child: Scaffold(
                 body: PageView(
                   controller: viewModel.pageViewController,
-                  children: viewModel.isBusy
-                      ? [
-                          Container(
-                            alignment: Alignment.center,
-                            child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                    width: 64,
-                                    height: 64,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.black,
-                                      strokeWidth: 3,
-                                    )),
-                                Padding(
-                                    child: Text("Connecting to user"),
-                                    padding: EdgeInsets.only(top: 20)),
-                              ],
-                            ),
-                          )
-                        ]
-                      : [
-                          homeDestination(viewModel),
-                          bluetoothDestination(viewModel),
-                          profileDestination(viewModel),
-                          const Text("Nothing")
-                        ],
+                  children: [
+                    homeDestination(viewModel),
+                    bluetoothDestination(viewModel),
+                    profileDestination(viewModel),
+                    const Text("Nothing")
+                  ],
                   onPageChanged: (value) {
                     viewModel.setIndex(value);
                     viewModel.onPageChanged(value);
                   },
                 ),
-                bottomNavigationBar: viewModel.isBusy
-                    ? const SizedBox.shrink()
-                    : NavigationBar(
-                        indicatorColor: Colors.amber,
-                        onDestinationSelected: (value) {
-                          viewModel.setIndex(value);
-                          viewModel.onPageChanged(value);
-                          viewModel.pageViewController.animateToPage(value,
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeInOut);
-                        },
-                        selectedIndex: viewModel.currentIndex,
-                        destinations: const [
-                            NavigationDestination(
-                              label: "Home",
-                              selectedIcon: Icon(Icons.home),
-                              icon: Icon(Icons.home_outlined),
-                            ),
-                            NavigationDestination(
-                              label: "ESP32",
-                              icon: Icon(Icons.bluetooth),
-                            ),
-                            NavigationDestination(
-                              label: "Profile",
-                              icon: Icon(Icons.account_circle),
-                            ),
-                            NavigationDestination(
-                              label: "Notification",
-                              icon:
-                                  Badge(child: Icon(Icons.notifications_sharp)),
-                            ),
-                          ]),
+                bottomNavigationBar: NavigationBar(
+                    indicatorColor: Colors.amber,
+                    onDestinationSelected: (value) {
+                      viewModel.setIndex(value);
+                      viewModel.onPageChanged(value);
+                      viewModel.pageViewController.animateToPage(value,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeInOut);
+                    },
+                    selectedIndex: viewModel.currentIndex,
+                    destinations: const [
+                      NavigationDestination(
+                        label: "Home",
+                        selectedIcon: Icon(Icons.home),
+                        icon: Icon(Icons.home_outlined),
+                      ),
+                      NavigationDestination(
+                        label: "ESP32",
+                        icon: Icon(Icons.bluetooth),
+                      ),
+                      NavigationDestination(
+                        label: "Profile",
+                        icon: Icon(Icons.account_circle),
+                      ),
+                      NavigationDestination(
+                        label: "Notification",
+                        icon: Badge(child: Icon(Icons.notifications_sharp)),
+                      ),
+                    ]),
               ),
             ));
   }
 
   Widget homeDestination(HomeViewModel viewModel) {
-    if (viewModel.vehicles.length == 0) {
-      return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: Colors.amber,
-          child: const Icon(Icons.add),
-        ),
-        body: const Center(
-          child: Text(
-            "You have no cars!",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    if (!viewModel.isBusy) {
+      if (viewModel.vehicles.length == 0) {
+        return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: viewModel.showCreateCarsDialog,
+            backgroundColor: Colors.amber,
+            child: const Icon(Icons.add),
           ),
-        ),
-      );
+          body: const Center(
+            child: Text(
+              "You have no cars!",
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+          ),
+        );
+      }
     }
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: viewModel.showCreateCarsDialog,
         backgroundColor: Colors.amber,
         child: const Icon(Icons.add),
       ),
@@ -113,64 +93,93 @@ class HomeView extends StatelessWidget {
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
         ),
         Expanded(
-          child: ListView.builder(
-              itemCount: viewModel.vehicles.length,
-              itemBuilder: (context, index) {
-                final carModel = viewModel.vehicles[index];
-                return Card(
-                  elevation: 2.0, // Adds a subtle shadow.
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 30, vertical: 10), // Spacing around the card.
+          child: SmartRefresher(
+            controller: viewModel.refreshController,
+            enablePullDown: true,
+            onRefresh: viewModel.onRefresh,
+            child: viewModel.isBusy
+                ? loadingSpinner()
+                : ListView.builder(
+                    itemCount: viewModel.vehicles.length,
+                    itemBuilder: (context, index) {
+                      final carModel = viewModel.vehicles[index];
+                      return Card(
+                        elevation: 2.0, // Adds a subtle shadow.
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 30,
+                            vertical: 10), // Spacing around the card.
 
-                  child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 10.0), // Padding inside the container.
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical:
+                                    10.0), // Padding inside the container.
 
-                      child: ListTile(
-                        onTap: () =>
-                            viewModel.navigateToCarDetails(carModel.id),
-                        title: Column(
-                            mainAxisSize: MainAxisSize
-                                .min, // Use the minimum space that the child widgets need.
-                            crossAxisAlignment: CrossAxisAlignment
-                                .center, // Center the text horizontally.
-                            children: [
-                              Image.network(
-                                carModel.vehicleModel
-                                    .image_path, // Replace with your car image URL.
-                                width:
-                                    100, // Width of the image, you might want to adjust this.
-                                height: 60, // Height of the image.
-                                fit: BoxFit
-                                    .cover, // Fill the box without distorting the image.
-                              ),
-                              const SizedBox(
-                                  height:
-                                      10), // Spacing between image and text.
-                              Text(
-                                carModel.vehicleModel.model_name,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.black, // Text color.
-                                  fontWeight: FontWeight.bold, // Font weight.
-                                  fontSize: 24.0, // Font size.
-                                ),
-                              ),
-                              Text(
-                                'Next Service in the next ${carModel.kilometres} Km',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color:
-                                      Colors.grey[600], // Subtitle text color.
-                                  fontSize: 18.0, // Subtitle font size.
-                                ),
-                              ),
-                            ]),
-                      )),
-                );
-              }),
-        )
+                            child: ListTile(
+                              onTap: () =>
+                                  viewModel.navigateToCarDetails(carModel.id),
+                              title: Column(
+                                  mainAxisSize: MainAxisSize
+                                      .min, // Use the minimum space that the child widgets need.
+                                  crossAxisAlignment: CrossAxisAlignment
+                                      .center, // Center the text horizontally.
+                                  children: [
+                                    Image.network(
+                                      carModel.vehicleModel
+                                          .image_path, // Replace with your car image URL.
+                                      width:
+                                          100, // Width of the image, you might want to adjust this.
+                                      height: 60, // Height of the image.
+                                      fit: BoxFit
+                                          .cover, // Fill the box without distorting the image.
+                                    ),
+                                    const SizedBox(
+                                        height:
+                                            10), // Spacing between image and text.
+                                    Text(
+                                      carModel.vehicleModel.model_name,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.black, // Text color.
+                                        fontWeight:
+                                            FontWeight.bold, // Font weight.
+                                        fontSize: 24.0, // Font size.
+                                      ),
+                                    ),
+                                    verticalSpaceSmall,
+                                    RichText(
+                                      text: TextSpan(
+                                        text: 'Distances Traveled ',
+                                        style: TextStyle(
+                                          color: Colors
+                                              .black, // Subtitle text color.
+                                          fontSize: 18.0, // Subtitle font size.
+                                        ),
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                            text:
+                                                '${carModel.kilometres / 1000} ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          TextSpan(
+                                            text: 'Km',
+                                            style: TextStyle(
+                                              color: Colors
+                                                  .black, // Subtitle text color.
+                                              fontSize:
+                                                  18.0, // Subtitle font size.
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+                            )),
+                      );
+                    }),
+          ),
+        ),
       ]),
     );
   }
@@ -249,40 +258,66 @@ class HomeView extends StatelessWidget {
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              viewModel.user.username!,
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              viewModel.user.fullName ?? "null",
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              viewModel.user.email!,
-              textAlign: TextAlign.center,
-            ),
-            FractionallySizedBox(
-              widthFactor: 0.4,
-              child: ElevatedButton(
-                  onPressed: viewModel.logOutUser,
-                  style: const ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll<Color>(
-                          Color.fromARGB(255, 212, 50, 39))),
-                  child: !viewModel.isBusy
-                      ? const Text(
-                          'Log out',
-                          style: TextStyle(color: Colors.white),
-                        )
-                      : const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 3,
-                          ))),
-            ),
-          ]),
+          children: viewModel.isBusy
+              ? [loadingSpinner()]
+              : [
+                  Text(
+                    viewModel.user.username!,
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    viewModel.user.fullName ?? "null",
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    viewModel.user.email!,
+                    textAlign: TextAlign.center,
+                  ),
+                  FractionallySizedBox(
+                    widthFactor: 0.4,
+                    child: ElevatedButton(
+                        onPressed: viewModel.logOutUser,
+                        style: const ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll<Color>(
+                                Color.fromARGB(255, 212, 50, 39))),
+                        child: !viewModel.isBusy
+                            ? const Text(
+                                'Log out',
+                                style: TextStyle(color: Colors.white),
+                              )
+                            : const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 3,
+                                ))),
+                  ),
+                ]),
     );
+  }
+
+  Widget loadingSpinner() {
+    return Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsetsDirectional.only(top: 30),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+                width: 64,
+                height: 64,
+                child: CircularProgressIndicator(
+                  color: Colors.black,
+                  strokeWidth: 3,
+                )),
+            Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: Text(
+                  "Fetching data...",
+                  style: TextStyle(color: Colors.black, fontSize: 17),
+                )),
+          ],
+        ));
   }
 }

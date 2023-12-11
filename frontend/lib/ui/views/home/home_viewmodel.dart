@@ -10,6 +10,7 @@ import 'package:frontend/models/vehicleModel.model.dart';
 import 'package:frontend/services/api_service.dart';
 import 'package:frontend/services/authentication_service.dart';
 import 'package:frontend/ui/common/app_strings.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -32,6 +33,9 @@ class HomeViewModel extends IndexTrackingViewModel {
   final _navigationService = locator<NavigationService>();
 
   final FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
+
+  final RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   late final List<BluetoothDiscoveryResult> _devicesList = [];
   List<BluetoothDiscoveryResult> get deviceList => _devicesList;
@@ -95,6 +99,20 @@ class HomeViewModel extends IndexTrackingViewModel {
     //     description: "You can use this to connect and claim your ESP32");
   }
 
+  void updateData() async {
+    setBusy(true);
+    vehicles.clear();
+    var vehicleData = await _APIService.getUserVehicles(user.id);
+    vehicles.addAll(vehicleData);
+    setBusy(false);
+  }
+
+  void onRefresh() async {
+    updateData();
+    // if failed,use refreshFailed()
+    refreshController.refreshCompleted();
+  }
+
   void onPageChanged(int indexPage) async {
     await bluetooth.cancelDiscovery();
     print(indexPage);
@@ -152,6 +170,14 @@ class HomeViewModel extends IndexTrackingViewModel {
 
   void navigateToCarDetails(int idVehicle) {
     _navigationService.navigateToDetailCarsView(idVehicle: idVehicle);
+  }
+
+  void showCreateCarsDialog() async {
+    if ((await _dialogService.showCustomDialog(
+            variant: DialogType.newCar, data: user.id))!
+        .confirmed) {
+      updateData();
+    }
   }
 
   Future<bool> onBackPressed() async {

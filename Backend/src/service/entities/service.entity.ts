@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -21,7 +22,7 @@ export class Service {
   @Column({ enum: ['overdue', 'upcoming'], type: 'enum', nullable: false })
   type: service_type;
 
-  @OneToMany(() => Vehicle, (vehicle) => vehicle.services, {
+  @ManyToMany(() => Vehicle, (vehicle) => vehicle.services, {
     onUpdate: 'CASCADE',
   })
   vehicles: Vehicle[];

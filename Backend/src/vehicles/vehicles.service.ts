@@ -13,7 +13,7 @@ export class VehiclesService {
     @InjectRepository(Vehicle)
     private vehiclesRepository: Repository<Vehicle>,
     private readonly userService: UserService,
-  ) {}
+  ) { }
 
   async create(createVehicleDto: CreateVehicleDto) {
     // Find if user Id is valid
@@ -28,9 +28,7 @@ export class VehiclesService {
     return await this.vehiclesRepository.find({ loadEagerRelations: true });
   }
 
-  async findOneByName(name: string): Promise<Vehicle> {
-    return await this.vehiclesRepository.findOneBy({ name });
-  }
+
 
   async findOneVehicleByUserID(userID: number): Promise<Vehicle[]> {
     const vehicle = await this.vehiclesRepository.findBy({ userID });
@@ -51,9 +49,9 @@ export class VehiclesService {
   }
 
   async update(id: number, updateVehicleDto: UpdateVehicleDto) {
-    const { kilometres, name, type, years } = updateVehicleDto;
+    const { kilometres,  type, date } = updateVehicleDto;
 
-    if (kilometres == null && name == null && type == null && years == null) {
+    if (kilometres == null  && type == null && date == null) {
       throw new HttpException('Body is empty!', HttpStatus.BAD_REQUEST);
     }
 

@@ -5,6 +5,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToOne,
@@ -16,9 +17,6 @@ export class Vehicle {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
-  name: string;
-
   @Column({ name: 'userid', nullable: false })
   userID: number;
 
@@ -29,7 +27,7 @@ export class Vehicle {
   type: vehicle_type;
 
   @Column({ type: 'timestamptz' })
-  years: Date;
+  date: Date;
 
   @Column({ default: 0 })
   kilometres: number;
@@ -49,12 +47,21 @@ export class Vehicle {
   @JoinColumn({ name: 'model_id' })
   vehicleModel: VehicleModel;
 
-  @ManyToOne(() => Service, (service) => service.vehicles, {
+  @ManyToMany(() => Service, (service) => service.vehicles, {
     eager: true,
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'service_id' })
-  services: Service;
+  @JoinTable({
+    name: 'vehicleServices', joinColumn: {
+      name: "vehicles",
+      referencedColumnName: "id"
+    },
+    inverseJoinColumn: {
+      name: "services",
+      referencedColumnName: "id"
+    }
+  })
+  services: Service[];
 }
 
 enum vehicle_type {

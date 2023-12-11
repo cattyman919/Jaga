@@ -30,6 +30,5 @@ class DetailCarsViewModel extends BaseViewModel {
     setBusy(true);
     vehicle = await _APIService.getVehicleID(idVehicle);
     setBusy(false);
-    print(vehicle.name);
   }
 }

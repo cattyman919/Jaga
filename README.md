@@ -26,7 +26,7 @@ vehicle's maintenance, including the dates and types of services performed.
 
 
 ## Technical architecture
-![esp](images/esp32.jpg) <br> <br>
+![esp](images/esp32.jpg) 
 ![esp](images/neo_6M_module.jpg) <br>
 <br>Jaga is built using the following technologies:
 <!--UL-->
@@ -71,7 +71,7 @@ The Jaga application stands out for its user-friendly interface, providing an in
 ## Application
 ### Sign Up
 ![sign_up1](images/sign_up1.png)
-![sign_up2](images/sign_up2.png)
+![sign_up2](images/sign_up2.png) <br>
 ![sign_up3](images/sign_up3.png)
 ![sign_up4](images/sign_up4.png)
 ### Login
@@ -79,7 +79,7 @@ The Jaga application stands out for its user-friendly interface, providing an in
 ![login2](images/login2.png)
 ![login3](images/login3.png)
 ### Bluetooth
-![bluetooth1](images/bluetooth1.png) <br>
+![bluetooth1](images/bluetooth1.png)
 ![bluetooth2](images/bluetooth2.png)
 ### Main page
 ![home](images/home.png)
